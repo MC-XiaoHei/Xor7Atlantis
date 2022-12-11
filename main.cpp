@@ -42,9 +42,6 @@ int main(int argc, char *argv[]){
             break;
         }
     }
-    QFont font;
-    font.setFamily("Microsoft YaHei");
-    a.setFont(font);
     LaunchCore::getJava();
     AuthCore * ac=new AuthCore;
     ac->connect(ac,&AuthCore::authProgressUpdate,ac,[=](bool state,QString msg){

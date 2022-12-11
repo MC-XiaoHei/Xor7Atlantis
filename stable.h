@@ -51,7 +51,7 @@
     #define NATIVES "natives-unix"
 #endif
 
-#define X7A_VER QString("Snapshot 0.0.2")
+#define X7A_VER QString("Snapshot 0.0.1")
 #define MAIN_SIZE_X 840
 #define MAIN_SIZE_Y 480
 #define Point qDebug()<<__FILE__<<" "<<__LINE__
