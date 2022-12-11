@@ -2,7 +2,7 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
     this->setWindowIcon(QIcon(":/Images/Icon/icon.gif"));
-    this->setMinimumSize(840,480);
+    this->setMinimumSize(MAIN_SIZE_X,MAIN_SIZE_Y);
     this->setMouseTracking(true);
     this->setWindowTitle("Xor 7 Atlantis");
     this->setWindowFlags(Qt::FramelessWindowHint);
@@ -18,12 +18,38 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
     shadow->setColor(Qt::black);
     shadow->setOffset(0);
     m_background->setGraphicsEffect(shadow);
-    connect(m_body,&MainWidget::onClose,this,&MainWindow::close);
+    connect(m_body,&MainWidget::closeWindow,this,&MainWindow::close);
+    connect(m_body,&MainWidget::minimizeWindow,this,&MainWindow::minimizeWindow);
     connect(this,&MainWindow::closeWindow,this,[=](){
-
+        visible=false;
+        running=true;
+        emit minimizeWindow();
+    });
+    connect(this,&MainWindow::minimizeWindow,this,[=](){
+        flash=true;
+        quint16 x=this->x(),y=this->y();
+        this->setMinimumSize(0,0);
+        QPropertyAnimation *transparentAnimation=new QPropertyAnimation(this,"windowOpacity",this);
+        transparentAnimation->setEasingCurve(QEasingCurve::Linear);
+        transparentAnimation->setDuration(256);
+        transparentAnimation->setKeyValueAt(0, 1);
+        transparentAnimation->setKeyValueAt(0.5, 0);
+        transparentAnimation->setKeyValueAt(1, 0);
+        connect(transparentAnimation,&QPropertyAnimation::finished,this,[=](){
+            flash=false;
+            this->showMinimized();
+            if(!visible) this->hide();
+            if(running) qApp->quit();
+            this->setWindowOpacity(1);
+        });
+        transparentAnimation->start();
     });
 }
 void MainWindow::mousePressEvent(QMouseEvent *event){
+    if(flash){
+        event->accept();
+        return;
+    }
     QPoint p=event->pos();
     quint64 left=UNZOOM(p.x()),
             right=UNZOOM(width()-left),
@@ -82,7 +108,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event){
 }
 void MainWindow::closeEvent(QCloseEvent *event){
     emit closeWindow();
-    event->accept();
+    event->ignore();
 }
 void MainWindow::resizeEvent(QResizeEvent *event){
     m_background->resize(this->size().width()-2*ZOOM(8),

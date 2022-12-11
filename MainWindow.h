@@ -39,8 +39,11 @@ private:
     QPointF m_movePos,
             m_resizePos;
     QRect m_resizeLocation;
+    bool flash=false,
+         visible=true,
+         running=false;
 signals:
-    void minisize();
+    void minimizeWindow();
     void closeWindow();
 protected:
     void closeEvent(QCloseEvent *event);

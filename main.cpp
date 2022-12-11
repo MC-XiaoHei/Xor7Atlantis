@@ -33,7 +33,6 @@ void startGame(){
 }
 int main(int argc, char *argv[]){
     QApplication a(argc, argv);
-
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
     for (const QString &locale : uiLanguages) {
@@ -43,6 +42,9 @@ int main(int argc, char *argv[]){
             break;
         }
     }
+    QFont font;
+    font.setFamily("Microsoft YaHei");
+    a.setFont(font);
     LaunchCore::getJava();
     AuthCore * ac=new AuthCore;
     ac->connect(ac,&AuthCore::authProgressUpdate,ac,[=](bool state,QString msg){
@@ -61,10 +63,4 @@ int main(int argc, char *argv[]){
 }
 void throwX(QString at,QString msg,quint8 level){
     qDebug()<<at<<" "<<msg<<" "<<level;
-}
-bool inElement(quint32 x, quint32 y, QWidget *e){
-    return x>=e->x()&&
-            y>=e->y()&&
-            x<=e->x()+e->width()&&
-            y<=e->y()+e->height();
 }

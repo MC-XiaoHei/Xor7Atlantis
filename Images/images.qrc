@@ -8,5 +8,7 @@
         <file>Icon/download.png</file>
         <file>Icon/home.png</file>
         <file>Icon/settings.png</file>
+        <file>Icon/games.png</file>
+        <file>Icon/icon.ico</file>
     </qresource>
 </RCC>
