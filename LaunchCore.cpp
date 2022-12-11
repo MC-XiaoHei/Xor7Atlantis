@@ -203,7 +203,7 @@ QStringList LaunchCore::getUnzipNativeCmd(VerInfo ver,QString npath){
     if(npath!=""){
         QStringList res;
         QString jarDir=QDir::toNativeSeparators(QString("%1/libraries/%2").arg(ver.gamePath,npath));
-        res.push_back(QDir::toNativeSeparators(QString(":/Tools/7z.exe e \"%1\" -o\"%2/natives\" *dll -r -y").arg(jarDir,ver.verPath())));
+        res.push_back(QDir::toNativeSeparators(QString("7z e \"%1\" -o\"%2/natives\" *dll -r -y").arg(jarDir,ver.verPath())));
         res.push_back(QDir::toNativeSeparators(QString("7z e \"%1\" -o\"%2/natives/sha1\" *sha1 -r -y").arg(jarDir,ver.verPath())));
         return res;
     }else{
@@ -305,7 +305,7 @@ QString LaunchCore::getStartCmd(VerInfo ver,LaunchInfo lInfo){
     jInfo.argu.replace("${assets_index_name}",
                  jInfo.assetsIndex);
     jInfo.argu.replace("${auth_access_token}",
-                 lInfo.profile.accessToken);
+                 lInfo.profile.mcAccessToken);
     jInfo.argu.replace("${user_type}",
                  "mojang");
     jInfo.argu.replace("${version_type}",

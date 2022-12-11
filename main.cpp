@@ -14,7 +14,7 @@ void startGame(){
     launch.height=400;
     launch.width=640;
     launch.mem=1024;
-    launch.java=LaunchCore::javaInfoVec.at(1);
+    launch.java=LaunchCore::javaInfoVec.at(2);
     ver.name="1.7.10";
     ver.gamePath="D:\\Xor 7 Championship Client\\.minecraft";
     LaunchCore::getJson(ver);
@@ -52,10 +52,10 @@ int main(int argc, char *argv[]){
     w.show();
     w.activateWindow();
     Wait(1000);
-    for(JavaInfo j:LaunchCore::javaInfoVec){
-        qDebug()<<j.path<<" "<<j.fullVer;
-    }
-//    startGame();
+//    for(JavaInfo j:LaunchCore::javaInfoVec){
+//        qDebug()<<j.path<<" "<<j.fullVer;
+//    }
+    startGame();
     return a.exec();
 }
 void throwX(QString at,QString msg,quint8 level){
