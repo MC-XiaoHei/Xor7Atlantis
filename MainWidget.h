@@ -3,6 +3,7 @@
 
 #include "stable.h"
 #include "Zoomer.h"
+#include "Page.h"
 
 class MainWidget : public QWidget
 {
@@ -12,6 +13,7 @@ public:
     void setBackground(QImage bg){this->m_bg=bg;}
     void setSideBarInfo();
     void onHomeBtnCicked();
+    void switchPage(QString name);
 signals:
     void closeWindow();
     void minimizeWindow();
@@ -20,7 +22,7 @@ private:
          flash=false;
     QImage m_bg;
     QLabel *m_background=new QLabel(this),
-           *t_sideBarHome=new QLabel("启动游戏");
+           *t_sideBarHome=new QLabel("主页");
     QPushButton *m_titleBar=new QPushButton(this),
                 *m_titleBarClose=new QPushButton(),
                 *m_titleBarMin=new QPushButton(),
@@ -28,7 +30,7 @@ private:
                 *m_sideBarInfo=new QPushButton(this),
                 *m_sideBarHome=new QPushButton(),
                 *m_sideBarMenu=new QPushButton();
-    QMap<QString,QWidget*> pages;
+    QMap<QString,Page*> pages;
 protected:
     void resizeEvent(QResizeEvent* event);
     bool eventFilter(QObject *watched, QEvent *event);

@@ -3,7 +3,9 @@
 MainWidget::MainWidget(QWidget *parent)
     : QWidget{parent}
 {
+    parent->installEventFilter(this);
     this->installEventFilter(this);
+    m_sideBarInfo->setParent(parent);
     m_titleBarClose->setParent(parent);
     m_titleBarMin->setParent(parent);
     m_sideBarMenu->setParent(parent);
@@ -18,42 +20,84 @@ MainWidget::MainWidget(QWidget *parent)
     t_sideBarHome->setFont(font);
     t_sideBarHome->setAlignment(Qt::AlignVCenter);
     t_sideBarHome->installEventFilter(this);
-    m_sideBarInfo->setStyleSheet("border-radius:0px;");
+    m_sideBarInfo->setStyleSheet("background-color:rgb(255,255,255);"
+                                 "border-radius:0px;");
     m_titleBarMin->setStyleSheet("background-color:rgba(255,255,255,0);");
     m_sideBarMenu->setStyleSheet("background-color:rgba(255,255,255,0);");
     m_sideBarHome->setStyleSheet("background-color:rgba(255,255,255,0);");
 //    t_sideBarHome->setStyleSheet("background-color:rgb(255,0,255);");
+    Page* home=new Page(this);
+    QGridLayout *homeLayout=new QGridLayout(home->body);
+    home->body->setLayout(homeLayout);
+    for(int i=0;i<100;i++)
+        homeLayout->addWidget(new QPushButton(QString::number(i)));
+    home->flush();
+    pages.insert("home",home);
+    Page* profile=new Page(this);
+    QGridLayout *profileLayout=new QGridLayout(profile->body);
+    profile->body->setLayout(profileLayout);
+    profile->flush();
+    pages.insert("profile",profile);
     setBackground(QImage(":/Images/background.png"));
     connect(m_titleBarClose,&QPushButton::clicked,this,&MainWidget::closeWindow);
     connect(m_titleBarMin,&QPushButton::clicked,this,&MainWidget::minimizeWindow);
     connect(m_sideBarMenu,&QPushButton::clicked,this,&MainWidget::setSideBarInfo);
     connect(m_sideBarHome,&QPushButton::clicked,this,&MainWidget::onHomeBtnCicked);
 }
+void MainWidget::switchPage(QString name){
+
+}
 void MainWidget::onHomeBtnCicked(){
     Point;
 }
 bool MainWidget::eventFilter(QObject *watched, QEvent *event){
-    if(watched==t_sideBarHome && event->type()==QEvent::MouseButtonPress)
+    if(watched==t_sideBarHome &&
+       event->type()==QEvent::MouseButtonPress)
         onHomeBtnCicked();
     return false;
 }
 void MainWidget::resizeEvent(QResizeEvent* event){
     Q_UNUSED(event);
-    m_titleBar->move(ZOOM(48),0);
-    m_sideBarMenu->move(ZOOM(8),ZOOM(8));
-    m_sideBarHome->move(ZOOM(16),ZOOM(62));
-    t_sideBarHome->move(0,ZOOM(54));
-    m_titleBar->resize(this->width()-ZOOM(48),ZOOM(48));
-    m_titleBarClose->move(ZOOM(8)+this->width()-ZOOM(48),ZOOM(8));
-    m_titleBarMin->move(ZOOM(8)+this->width()-ZOOM(96),ZOOM(8));
-    m_sideBar->resize(ZOOM(48),this->height());
-    m_sideBarInfo->resize(0,this->height());
-    m_sideBarInfo->move(ZOOM(48),0);
-    QSize size(this->width()-ZOOM(48),this->height()),
+    for(Page* page:qAsConst(pages)){
+        page->move(ZOOM(48),
+                   ZOOM(48));
+        page->resize(this->width()-ZOOM(48),
+                     this->height()-ZOOM(48));
+        page->setStyleSheet(QString(
+            "border-radius:0px;"
+            "background-color:rgba(255,255,255,64);"
+            "border-bottom-right-radius:%1px;")
+            .arg(ZOOM(8)));
+    }
+    m_titleBar->move(ZOOM(48),
+                     0);
+    m_sideBarMenu->move(ZOOM(8),
+                        ZOOM(8));
+    m_sideBarHome->move(ZOOM(16),
+                        ZOOM(62));
+    t_sideBarHome->move(0,
+                        ZOOM(54));
+    m_titleBar->resize(this->width()-ZOOM(48),
+                       ZOOM(48));
+    m_titleBarClose->move(this->width()-ZOOM(40),
+                          ZOOM(8));
+    m_titleBarMin->move(this->width()-ZOOM(91),
+                        ZOOM(8));
+    m_sideBar->resize(ZOOM(48),
+                      this->height());
+    m_sideBarInfo->resize(0,
+                          this->height());
+    m_sideBarInfo->move(ZOOM(56),
+                        ZOOM(8));
+    QSize size(this->width()-ZOOM(48),
+               this->height()),
           imageSize,
-          barTextSize(ZOOM(128),ZOOM(24)),
-          barBtnSize(ZOOM(48),ZOOM(48)),
-          barBtnIconSize(ZOOM(32),ZOOM(23));
+          barTextSize(ZOOM(128),
+                      ZOOM(24)),
+          barBtnSize(ZOOM(48),
+                     ZOOM(48)),
+          barBtnIconSize(ZOOM(32),
+                         ZOOM(23));
     m_titleBarClose->resize(barBtnSize);
     m_titleBarClose->setIconSize(barBtnIconSize);
     m_titleBarMin->resize(barBtnSize);
@@ -95,7 +139,7 @@ void MainWidget::resizeEvent(QResizeEvent* event){
     m_sideBarMenu->raise();
     m_titleBarClose->raise();
     m_titleBarMin->raise();
-
+    t_sideBarHome->raise();
 }
 void MainWidget::setSideBarInfo(){
     if(flash) return;

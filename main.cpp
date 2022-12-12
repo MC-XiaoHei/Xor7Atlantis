@@ -55,7 +55,7 @@ int main(int argc, char *argv[]){
 //    for(JavaInfo j:LaunchCore::javaInfoVec){
 //        qDebug()<<j.path<<" "<<j.fullVer;
 //    }
-    startGame();
+//    startGame();
     return a.exec();
 }
 void throwX(QString at,QString msg,quint8 level){
