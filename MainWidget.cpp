@@ -1,4 +1,5 @@
 #include "MainWidget.h"
+#include "InfoButton.h"
 
 MainWidget::MainWidget(QWidget *parent)
     : QWidget{parent}
@@ -33,8 +34,20 @@ MainWidget::MainWidget(QWidget *parent)
     m_sideBarHome->setStyleSheet("background-color:rgba(255,255,255,0);");
     m_sideBarProfile->setStyleSheet("background-color:rgba(255,255,255,0);");
     Page* home=new Page(this);
-    QGridLayout *homeLayout=new QGridLayout(home->body);
-    home->body->setLayout(homeLayout);
+    QHBoxLayout *homeHLayout=new QHBoxLayout(home->body);
+    QVBoxLayout *homeVLayout=new QVBoxLayout();
+    homeHLayout->addStretch();
+    homeHLayout->addLayout(homeVLayout);
+    homeHLayout->addStretch();
+    InfoButton* helloArea=new InfoButton(home->body);
+    helloArea->setMinimumSize(ZOOM(256),
+                              ZOOM(48));
+    helloArea->setText("你好，MC_XiaoHei");
+    helloArea->setSubText("开发者   微软登录");
+    helloArea->flush();
+    homeVLayout->addWidget(helloArea);
+    connect(helloArea,&InfoButton::clicked,this,[=](){Point;});
+    home->body->setLayout(homeHLayout);
     home->flush();
     home->show();
     pages.insert("home",home);

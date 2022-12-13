@@ -3,6 +3,7 @@
 
 #include "stable.h"
 #include "Zoomer.h"
+#include "InfoButton.h"
 #include "Page.h"
 
 class MainWidget : public QWidget
