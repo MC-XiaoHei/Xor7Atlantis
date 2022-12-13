@@ -39,24 +39,39 @@ MainWidget::MainWidget(QWidget *parent)
     homeHLayout->addStretch();
     homeHLayout->addLayout(homeVLayout);
     homeHLayout->addStretch();
-    InfoButton* helloArea=new InfoButton(home->body);
-    helloArea->setMinimumSize(ZOOM(320),
+    m_helloArea=new InfoButton(home->body);
+    m_helloArea->setMinimumSize(ZOOM(320),
                               ZOOM(96));
-    helloArea->setText("你好，Neraxemaplefall");
-    helloArea->setSubText("开发者   微软登录");
-    helloArea->flush();
-    homeVLayout->addWidget(helloArea);
-    connect(helloArea,&InfoButton::clicked,this,[=](){Point;});
+    m_helloArea->setText("你好，Neraxemaplefall");
+    m_helloArea->setSubText("开发者   微软登录");
+    m_helloArea->flush();
+    m_launchArea=new InfoButton(home->body);
+    m_launchArea->setMinimumSize(ZOOM(320),
+                                 ZOOM(96));
+    m_launchArea->setText("启动游戏");
+    m_launchArea->setSubText("1.18.2 Fabric");
+    m_launchArea->flush();
+    m_DIYArea=new QWidget(home->body);
+    m_DIYArea->setMinimumSize(ZOOM(320),
+                              ZOOM(192));
+    homeVLayout->addStretch();
+    homeVLayout->addWidget(m_helloArea);
+    homeVLayout->addSpacing(ZOOM(16));
+    homeVLayout->addWidget(m_DIYArea);
+    homeVLayout->addSpacing(ZOOM(16));
+    homeVLayout->addWidget(m_launchArea);
+    homeVLayout->addStretch();
+    connect(m_helloArea,&InfoButton::clicked,this,[=](){Point;});
     home->body->setLayout(homeHLayout);
     home->flush();
     home->show();
-    pages.insert("home",home);
+    m_pages.insert("home",home);
     Page* profile=new Page(this);
     QGridLayout *profileLayout=new QGridLayout(profile->body);
     profile->body->setLayout(profileLayout);
     profile->flush();
     profile->hide();
-    pages.insert("profile",profile);
+    m_pages.insert("profile",profile);
     setBackground(QImage(":/Images/background.png"));
     connect(m_titleBarClose,&QPushButton::clicked,this,&MainWidget::closeWindow);
     connect(m_titleBarMin,&QPushButton::clicked,this,&MainWidget::minimizeWindow);
@@ -65,10 +80,10 @@ MainWidget::MainWidget(QWidget *parent)
     connect(m_sideBarProfile,&QPushButton::clicked,this,&MainWidget::onProfileBtnCicked);
 }
 void MainWidget::switchPage(QString name){
-    if(name==nowPage) return;
-    pages.value(nowPage)->flashHide();
-    pages.value(name)->flashShow();
-    nowPage=name;
+    if(name==m_nowPage) return;
+    m_pages.value(m_nowPage)->flashHide();
+    m_pages.value(name)->flashShow();
+    m_nowPage=name;
 }
 void MainWidget::onHomeBtnCicked(){
     switchPage("home");
@@ -87,7 +102,7 @@ bool MainWidget::eventFilter(QObject *watched, QEvent *event){
 }
 void MainWidget::resizeEvent(QResizeEvent* event){
     Q_UNUSED(event);
-    for(Page* page:qAsConst(pages)){
+    for(Page* page:qAsConst(m_pages)){
         page->move(ZOOM(48),
                    ZOOM(48));
         page->resize(this->width()-ZOOM(48),

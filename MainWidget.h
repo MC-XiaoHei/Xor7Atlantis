@@ -23,6 +23,9 @@ private:
     bool sideBarInfoVisible=false,
          flash=false;
     QImage m_bg;
+    QWidget *m_DIYArea;
+    InfoButton *m_helloArea,
+               *m_launchArea;
     QLabel *m_background=new QLabel(this),
            *t_sideBarHome=new QLabel("主页"),
            *t_sideBarProfile=new QLabel("账号管理");
@@ -34,8 +37,8 @@ private:
                 *m_sideBarHome=new QPushButton(),
                 *m_sideBarProfile=new QPushButton(),
                 *m_sideBarMenu=new QPushButton();
-    QMap<QString,Page*> pages;
-    QString nowPage="home";
+    QMap<QString,Page*> m_pages;
+    QString m_nowPage="home";
 protected:
     void resizeEvent(QResizeEvent* event);
     bool eventFilter(QObject *watched, QEvent *event);

@@ -12,8 +12,6 @@ InfoButton::InfoButton(QWidget *parent)
     vLayout->addWidget(l_subText);
     vLayout->addStretch();
     icon=QIcon(":/Images/Icon/home.png");
-    this->setStyleSheet("border-radius:0px;"
-                        "background-color:rgb(255,255,255);");
     ui_line->setMaximumHeight(ZOOM(2));
     ui_line->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     l_text->setAttribute(Qt::WA_TransparentForMouseEvents, true);
@@ -35,5 +33,8 @@ void InfoButton::resizeEvent(QResizeEvent *event){
                                this->height()*0.9));
     l_text->setText(text);
     l_subText->setText(subText);
-
+    this->setStyleSheet(QString(
+        "border-radius:%1px;"
+        "background-color:rgba(255,255,255,200);")
+        .arg(ZOOM(8)));
 }
