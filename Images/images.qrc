@@ -10,5 +10,6 @@
         <file>Icon/settings.png</file>
         <file>Icon/games.png</file>
         <file>Icon/icon.ico</file>
+        <file>Icon/profile.png</file>
     </qresource>
 </RCC>

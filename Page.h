@@ -9,6 +9,8 @@ class Page : public QScrollArea
 public:
     explicit Page(QWidget *parent = nullptr);
     void flush();
+    void flashHide();
+    void flashShow();
     QWidget *body=new QWidget(this);
 signals:
 

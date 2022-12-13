@@ -13,6 +13,7 @@ public:
     void setBackground(QImage bg){this->m_bg=bg;}
     void setSideBarInfo();
     void onHomeBtnCicked();
+    void onProfileBtnCicked();
     void switchPage(QString name);
 signals:
     void closeWindow();
@@ -22,15 +23,18 @@ private:
          flash=false;
     QImage m_bg;
     QLabel *m_background=new QLabel(this),
-           *t_sideBarHome=new QLabel("主页");
+           *t_sideBarHome=new QLabel("主页"),
+           *t_sideBarProfile=new QLabel("账号管理");
     QPushButton *m_titleBar=new QPushButton(this),
                 *m_titleBarClose=new QPushButton(),
                 *m_titleBarMin=new QPushButton(),
                 *m_sideBar=new QPushButton(this),
                 *m_sideBarInfo=new QPushButton(this),
                 *m_sideBarHome=new QPushButton(),
+                *m_sideBarProfile=new QPushButton(),
                 *m_sideBarMenu=new QPushButton();
     QMap<QString,Page*> pages;
+    QString nowPage="home";
 protected:
     void resizeEvent(QResizeEvent* event);
     bool eventFilter(QObject *watched, QEvent *event);

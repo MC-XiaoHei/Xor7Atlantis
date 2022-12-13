@@ -10,9 +10,12 @@ MainWidget::MainWidget(QWidget *parent)
     m_titleBarMin->setParent(parent);
     m_sideBarMenu->setParent(parent);
     m_sideBarHome->setParent(parent);
+    m_sideBarProfile->setParent(parent);
     t_sideBarHome->setParent(m_sideBarInfo);
+    t_sideBarProfile->setParent(m_sideBarInfo);
     m_sideBarMenu->setIcon(QIcon(":/Images/Icon/menu.png"));
     m_sideBarHome->setIcon(QIcon(":/Images/Icon/home.png"));
+    m_sideBarProfile->setIcon(QIcon(":/Images/Icon/profile.png"));
     m_titleBarMin->setIcon(QIcon(":/Images/Icon/min.png"));
     m_titleBarClose->setIcon(QIcon(":/Images/Icon/close.png"));
     QFont font;
@@ -20,40 +23,53 @@ MainWidget::MainWidget(QWidget *parent)
     t_sideBarHome->setFont(font);
     t_sideBarHome->setAlignment(Qt::AlignVCenter);
     t_sideBarHome->installEventFilter(this);
+    t_sideBarProfile->setFont(font);
+    t_sideBarProfile->setAlignment(Qt::AlignVCenter);
+    t_sideBarProfile->installEventFilter(this);
     m_sideBarInfo->setStyleSheet("background-color:rgb(255,255,255);"
                                  "border-radius:0px;");
     m_titleBarMin->setStyleSheet("background-color:rgba(255,255,255,0);");
     m_sideBarMenu->setStyleSheet("background-color:rgba(255,255,255,0);");
     m_sideBarHome->setStyleSheet("background-color:rgba(255,255,255,0);");
-//    t_sideBarHome->setStyleSheet("background-color:rgb(255,0,255);");
+    m_sideBarProfile->setStyleSheet("background-color:rgba(255,255,255,0);");
     Page* home=new Page(this);
     QGridLayout *homeLayout=new QGridLayout(home->body);
     home->body->setLayout(homeLayout);
-    for(int i=0;i<100;i++)
-        homeLayout->addWidget(new QPushButton(QString::number(i)));
     home->flush();
+    home->show();
     pages.insert("home",home);
     Page* profile=new Page(this);
     QGridLayout *profileLayout=new QGridLayout(profile->body);
     profile->body->setLayout(profileLayout);
     profile->flush();
+    profile->hide();
     pages.insert("profile",profile);
     setBackground(QImage(":/Images/background.png"));
     connect(m_titleBarClose,&QPushButton::clicked,this,&MainWidget::closeWindow);
     connect(m_titleBarMin,&QPushButton::clicked,this,&MainWidget::minimizeWindow);
     connect(m_sideBarMenu,&QPushButton::clicked,this,&MainWidget::setSideBarInfo);
     connect(m_sideBarHome,&QPushButton::clicked,this,&MainWidget::onHomeBtnCicked);
+    connect(m_sideBarProfile,&QPushButton::clicked,this,&MainWidget::onProfileBtnCicked);
 }
 void MainWidget::switchPage(QString name){
-
+    if(name==nowPage) return;
+    pages.value(nowPage)->flashHide();
+    pages.value(name)->flashShow();
+    nowPage=name;
 }
 void MainWidget::onHomeBtnCicked(){
-    Point;
+    switchPage("home");
+}
+void MainWidget::onProfileBtnCicked(){
+    switchPage("profile");
 }
 bool MainWidget::eventFilter(QObject *watched, QEvent *event){
     if(watched==t_sideBarHome &&
        event->type()==QEvent::MouseButtonPress)
         onHomeBtnCicked();
+    if(watched==t_sideBarProfile &&
+       event->type()==QEvent::MouseButtonPress)
+        onProfileBtnCicked();
     return false;
 }
 void MainWidget::resizeEvent(QResizeEvent* event){
@@ -77,6 +93,10 @@ void MainWidget::resizeEvent(QResizeEvent* event){
                         ZOOM(62));
     t_sideBarHome->move(0,
                         ZOOM(54));
+    m_sideBarProfile->move(ZOOM(16),
+                           ZOOM(102));
+    t_sideBarProfile->move(0,
+                           ZOOM(94));
     m_titleBar->resize(this->width()-ZOOM(48),
                        ZOOM(48));
     m_titleBarClose->move(this->width()-ZOOM(40),
@@ -108,6 +128,9 @@ void MainWidget::resizeEvent(QResizeEvent* event){
     m_sideBarHome->resize(barBtnSize);
     m_sideBarHome->setIconSize(barBtnIconSize);
     t_sideBarHome->resize(barTextSize);
+    m_sideBarProfile->resize(barBtnSize);
+    m_sideBarProfile->setIconSize(barBtnIconSize);
+    t_sideBarProfile->resize(barTextSize);
     m_background->resize(this->width()-ZOOM(48),this->height());
     m_background->move(ZOOM(48),0);
     double Iproportion=m_bg.width()/m_bg.height();

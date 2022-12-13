@@ -9,3 +9,9 @@ void Page::flush(){
     this->setWidget(body);
     this->setWidgetResizable(true);
 }
+void Page::flashHide(){
+    this->hide();
+}
+void Page::flashShow(){
+    this->show();
+}
