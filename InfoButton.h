@@ -20,10 +20,10 @@ protected:
 private:
     QIcon icon;
     QString text,subText;
-    QPushButton *ui_line=new QPushButton(this);
+    QPushButton *ui_line=new QPushButton(this),
+                *ui_icon=new QPushButton(this);
     QLabel *l_text=new QLabel(this),
-           *l_subText=new QLabel(this),
-           *l_icon=new QLabel(this);
+           *l_subText=new QLabel(this);
 };
 
 #endif // INFOBUTTON_H
