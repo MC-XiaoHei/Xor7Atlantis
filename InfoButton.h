@@ -18,6 +18,8 @@ signals:
 protected:
     void resizeEvent(QResizeEvent *event);
 private:
+    QHBoxLayout *layout=new QHBoxLayout(this);
+    QVBoxLayout *vLayout=new QVBoxLayout();
     QIcon icon;
     QString text,subText;
     QPushButton *ui_line=new QPushButton(this),

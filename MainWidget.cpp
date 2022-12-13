@@ -40,9 +40,9 @@ MainWidget::MainWidget(QWidget *parent)
     homeHLayout->addLayout(homeVLayout);
     homeHLayout->addStretch();
     InfoButton* helloArea=new InfoButton(home->body);
-    helloArea->setMinimumSize(ZOOM(256),
-                              ZOOM(48));
-    helloArea->setText("你好，MC_XiaoHei");
+    helloArea->setMinimumSize(ZOOM(320),
+                              ZOOM(96));
+    helloArea->setText("你好，Neraxemaplefall");
     helloArea->setSubText("开发者   微软登录");
     helloArea->flush();
     homeVLayout->addWidget(helloArea);
