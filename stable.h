@@ -1,9 +1,10 @@
 #ifndef STABLE_H
 #define STABLE_H
 
-#include "httpserver/staticfilecontroller.h"
-#include "httpserver/httprequesthandler.h"
-#include "HttpServer/httplistener.h"
+#include "Third-Party/SingleApplication/SingleApplication"
+#include "Third-Party/httpserver/staticfilecontroller.h"
+#include "Third-Party/httpserver/httprequesthandler.h"
+#include "Third-Party/HttpServer/httplistener.h"
 #include <QDesktopServices>
 #include <QGraphicsEffect>
 #include <QApplication>
@@ -61,6 +62,7 @@
 #define CreatePtrA(t,name,data) SPTR(t) name=std::make_shared<t>(data)
 #define CreatePtr(t,name) SPTR(t) name=std::make_shared<t>()
 #define Wait(msec) QEventLoop loop;QTimer::singleShot(msec, &loop, SLOT(quit()));loop.exec()
+#define ShowOnTop Qt::WindowFlags flags=windowFlags();flags|=Qt::WindowStaysOnTopHint;setWindowFlags(flags);show();flags&=~Qt::WindowStaysOnTopHint;setWindowFlags(flags);showNormal()
 
 void throwX(QString at,QString msg,quint8 level);
 

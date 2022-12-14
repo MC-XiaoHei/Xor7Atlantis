@@ -45,6 +45,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
         transparentAnimation->start();
     });
 }
+void MainWindow::onReceiveMsg(QString msg){
+    ShowOnTop;
+}
 void MainWindow::mousePressEvent(QMouseEvent *event){
     if(flash){
         event->accept();

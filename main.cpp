@@ -2,6 +2,7 @@
 #include "LaunchCore.h"
 #include "AuthCore.h"
 #include "MainWindow.h"
+#include <QMessageBox>
 
 void startGame(){
     VerInfo ver;
@@ -32,7 +33,7 @@ void startGame(){
     s->start(path,QStringList());
 }
 int main(int argc, char *argv[]){
-    QApplication a(argc, argv);
+    SingleApplication a(argc,argv);
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
     for (const QString &locale : uiLanguages) {
@@ -43,15 +44,21 @@ int main(int argc, char *argv[]){
         }
     }
     LaunchCore::getJava();
-    AuthCore * ac=new AuthCore;
-    ac->connect(ac,&AuthCore::authProgressUpdate,ac,[=](bool state,QString msg){
-        qDebug()<<msg;
-    });
+//    AuthCore * ac=new AuthCore;
+//    ac->connect(ac,&AuthCore::authProgressUpdate,ac,[=](bool state,QString msg){
+//        qDebug()<<msg;
+//    });
 //    ac->ms_login();
     MainWindow w;
+    a.connect(&a,&QtSingleApplication::messageReceived,&a,
+    [&](QString msg){
+        if(msg != qApp->applicationFilePath()){
+            w.onReceiveMsg(msg);
+        }
+    });
     w.show();
     w.activateWindow();
-    Wait(1000);
+//    Wait(1000);
 //    for(JavaInfo j:LaunchCore::javaInfoVec){
 //        qDebug()<<j.path<<" "<<j.fullVer;
 //    }
