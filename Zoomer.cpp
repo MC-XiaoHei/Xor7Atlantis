@@ -10,3 +10,7 @@ quint64 Zoomer::zoom(double base){
 quint64 Zoomer::unZoom(quint64 base){
     return base/(m_zoomPercent*0.01);
 }
+void Zoomer::updateZOOM(qfloat16 newZ){
+    this->m_zoomPercent=newZ;
+    this->needUpdate=true;
+}

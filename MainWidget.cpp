@@ -19,59 +19,12 @@ MainWidget::MainWidget(QWidget *parent)
     m_sideBarProfile->setIcon(QIcon(":/Images/Icon/profile.png"));
     m_titleBarMin->setIcon(QIcon(":/Images/Icon/min.png"));
     m_titleBarClose->setIcon(QIcon(":/Images/Icon/close.png"));
-    QFont font;
-    font.setPixelSize(ZOOM(16));
-    t_sideBarHome->setFont(font);
-    t_sideBarHome->setAlignment(Qt::AlignVCenter);
-    t_sideBarHome->installEventFilter(this);
-    t_sideBarProfile->setFont(font);
-    t_sideBarProfile->setAlignment(Qt::AlignVCenter);
-    t_sideBarProfile->installEventFilter(this);
     m_sideBarInfo->setStyleSheet("background-color:rgb(255,255,255);"
                                  "border-radius:0px;");
     m_titleBarMin->setStyleSheet("background-color:rgba(255,255,255,0);");
     m_sideBarMenu->setStyleSheet("background-color:rgba(255,255,255,0);");
     m_sideBarHome->setStyleSheet("background-color:rgba(255,255,255,0);");
     m_sideBarProfile->setStyleSheet("background-color:rgba(255,255,255,0);");
-    Page* home=new Page(this);
-    QHBoxLayout *homeHLayout=new QHBoxLayout(home->body);
-    QVBoxLayout *homeVLayout=new QVBoxLayout();
-    homeHLayout->addStretch();
-    homeHLayout->addLayout(homeVLayout);
-    homeHLayout->addStretch();
-    m_helloArea=new InfoButton(home->body);
-    m_helloArea->setMinimumSize(ZOOM(320),
-                              ZOOM(96));
-    m_helloArea->setText("你好，Neraxemaplefall");
-    m_helloArea->setSubText("开发者   微软登录");
-    m_helloArea->flush();
-    m_launchArea=new InfoButton(home->body);
-    m_launchArea->setMinimumSize(ZOOM(320),
-                                 ZOOM(96));
-    m_launchArea->setText("启动游戏");
-    m_launchArea->setSubText("1.18.2 Fabric");
-    m_launchArea->flush();
-    m_DIYArea=new QWidget(home->body);
-    m_DIYArea->setMinimumSize(ZOOM(320),
-                              ZOOM(192));
-    homeVLayout->addStretch();
-    homeVLayout->addWidget(m_helloArea);
-    homeVLayout->addSpacing(ZOOM(16));
-    homeVLayout->addWidget(m_DIYArea);
-    homeVLayout->addSpacing(ZOOM(16));
-    homeVLayout->addWidget(m_launchArea);
-    homeVLayout->addStretch();
-    connect(m_helloArea,&InfoButton::clicked,this,[=](){Point;});
-    home->body->setLayout(homeHLayout);
-    home->flush();
-    home->show();
-    m_pages.insert("home",home);
-    Page* profile=new Page(this);
-    QGridLayout *profileLayout=new QGridLayout(profile->body);
-    profile->body->setLayout(profileLayout);
-    profile->flush();
-    profile->hide();
-    m_pages.insert("profile",profile);
     setBackground(QImage(":/Images/background.png"));
     connect(m_titleBarClose,&QPushButton::clicked,this,&MainWidget::closeWindow);
     connect(m_titleBarMin,&QPushButton::clicked,this,&MainWidget::minimizeWindow);
@@ -102,6 +55,68 @@ bool MainWidget::eventFilter(QObject *watched, QEvent *event){
 }
 void MainWidget::resizeEvent(QResizeEvent* event){
     Q_UNUSED(event);
+    ON_ZOOM_UPDATE{
+        m_pages.clear();
+        QFont font;
+        font.setPixelSize(ZOOM(16));
+        t_sideBarHome->setFont(font);
+        t_sideBarHome->setAlignment(Qt::AlignVCenter);
+        t_sideBarHome->installEventFilter(this);
+        t_sideBarProfile->setFont(font);
+        t_sideBarProfile->setAlignment(Qt::AlignVCenter);
+        t_sideBarProfile->installEventFilter(this);
+        Page* home=new Page(this);
+        QHBoxLayout *homeHLayout=new QHBoxLayout(home->body),
+                    *homeLaunchHLayout=new QHBoxLayout();
+        QVBoxLayout *homeVLayout=new QVBoxLayout();
+        m_helloArea=new InfoButton(home->body);
+        m_helloArea->setMinimumSize(ZOOM(320),
+                                  ZOOM(96));
+        m_helloArea->setText("你好，Neraxemaplefall");
+        m_helloArea->setSubText("开发者   微软登录");
+        m_helloArea->flush();
+        m_launchArea=new InfoButton(home->body);
+        m_launchArea->setMinimumSize(ZOOM(224),
+                                     ZOOM(96));
+        m_launchArea->setText("启动游戏");
+        m_launchArea->setSubText("1.18.2 Fabric");
+        m_launchArea->flush();
+        m_DIYArea=new QWidget(home->body);
+        m_DIYArea->setMinimumSize(ZOOM(320),
+                                  ZOOM(128));
+        m_homeLaunchChoose=new QPushButton(home->body);
+        m_homeLaunchChoose->setMinimumSize(ZOOM(96),
+                                           ZOOM(96));
+        homeHLayout->addStretch();
+        homeHLayout->addLayout(homeVLayout);
+        homeVLayout->addStretch();
+        homeVLayout->addWidget(m_helloArea);
+        homeVLayout->addSpacing(ZOOM(16));
+        homeVLayout->addWidget(m_DIYArea);
+        homeVLayout->addSpacing(ZOOM(16));
+        homeVLayout->addLayout(homeLaunchHLayout);
+        homeLaunchHLayout->addWidget(m_launchArea);
+        homeLaunchHLayout->addSpacing(ZOOM(16));
+        homeLaunchHLayout->addWidget(m_homeLaunchChoose);
+        homeVLayout->addStretch();
+        homeHLayout->addStretch();
+        connect(m_helloArea,&InfoButton::clicked,this,[=](){Point;});
+        home->body->setLayout(homeHLayout);
+        home->flush();
+        home->show();
+        m_pages.insert("home",home);
+        Page* profile=new Page(this);
+        QGridLayout *profileLayout=new QGridLayout(profile->body);
+        profile->body->setLayout(profileLayout);
+        profile->flush();
+        profile->hide();
+        m_pages.insert("profile",profile);
+        m_homeLaunchChoose->setStyleSheet(QString(
+             "border-radius:%1px;"
+             "background-color:rgba(255,255,255,200);")
+             .arg(ZOOM(8)));
+        UPDATE_OVER;
+    }
     for(Page* page:qAsConst(m_pages)){
         page->move(ZOOM(48),
                    ZOOM(48));
@@ -159,7 +174,8 @@ void MainWidget::resizeEvent(QResizeEvent* event){
     m_sideBarProfile->resize(barBtnSize);
     m_sideBarProfile->setIconSize(barBtnIconSize);
     t_sideBarProfile->resize(barTextSize);
-    m_background->resize(this->width()-ZOOM(48),this->height());
+    m_background->resize(this->width()-ZOOM(48),
+                         this->height());
     m_background->move(ZOOM(48),0);
     double Iproportion=m_bg.width()/m_bg.height();
     if(Iproportion>=(size.width()*1.00/size.height()))
@@ -179,14 +195,20 @@ void MainWidget::resizeEvent(QResizeEvent* event){
     QPixmap pixmap = QPixmap::fromImage(image);
     pixmap.setMask(mask);
     m_background->setPixmap(pixmap);
-    m_sideBar->setStyleSheet(QString("border-radius:0px;"
-                             "border-top-left-radius:%1px;"
-                             "border-bottom-left-radius:%1px;").arg(ZOOM(8)));
-    m_titleBar->setStyleSheet(QString("border-radius:0px;"
-                              "border-top-right-radius:%1px;"
-                              "background-color:rgba(255,255,255,200);").arg(ZOOM(6)));
-    m_titleBarClose->setStyleSheet(QString("background-color:rgba(255,255,255,0);"
-                                           "border-radius:%1px").arg(ZOOM(10)));
+    m_sideBar->setStyleSheet(QString(
+        "border-radius:0px;"
+        "border-top-left-radius:%1px;"
+        "border-bottom-left-radius:%1px;")
+        .arg(ZOOM(8)));
+    m_titleBar->setStyleSheet(QString(
+         "border-radius:0px;"
+         "border-top-right-radius:%1px;"
+         "background-color:rgba(255,255,255,200);")
+         .arg(ZOOM(6)));
+    m_titleBarClose->setStyleSheet(QString(
+         "background-color:rgba(255,255,255,0);"
+         "border-radius:%1px")
+         .arg(ZOOM(10)));
     m_sideBarMenu->raise();
     m_titleBarClose->raise();
     m_titleBarMin->raise();

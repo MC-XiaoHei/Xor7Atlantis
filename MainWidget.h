@@ -36,7 +36,8 @@ private:
                 *m_sideBarInfo=new QPushButton(this),
                 *m_sideBarHome=new QPushButton(),
                 *m_sideBarProfile=new QPushButton(),
-                *m_sideBarMenu=new QPushButton();
+                *m_sideBarMenu=new QPushButton(),
+                *m_homeLaunchChoose;
     QMap<QString,Page*> m_pages;
     QString m_nowPage="home";
 protected:

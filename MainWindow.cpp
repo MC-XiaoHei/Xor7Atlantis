@@ -1,7 +1,7 @@
 ﻿#include "MainWindow.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
-    this->setWindowIcon(QIcon(":/Images/Icon/icon.gif"));
+    this->setWindowIcon(QIcon(":/Images/Icon/favicon.gif"));
     this->setMinimumSize(MAIN_SIZE_X,MAIN_SIZE_Y);
     this->setMouseTracking(true);
     this->setWindowTitle("Xor 7 Atlantis");
