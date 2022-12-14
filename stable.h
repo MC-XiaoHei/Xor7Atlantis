@@ -42,7 +42,7 @@
 #ifdef Q_OS_LINUX
     #define NATIVES "natives-linux"
     #define SHELL "bash"
-#define ESuffix ".sh"
+    #define ESuffix ".sh"
 #endif
 #ifdef Q_OS_OSX
     #define NATIVES "natives-osx"
