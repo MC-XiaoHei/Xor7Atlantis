@@ -33,7 +33,11 @@ void InfoButton::resizeEvent(QResizeEvent *event){
                                this->height()*0.9));
     l_text->setText(text);
     l_subText->setText(subText);
-    this->setStyleSheet(QString(
+    if(transparent) this->setStyleSheet(QString(
+        "border-radius:%1px;"
+        "background-color:rgba(255,255,255,0);")
+        .arg(ZOOM(8)));
+    else this->setStyleSheet(QString(
         "border-radius:%1px;"
         "background-color:rgba(255,255,255,200);")
         .arg(ZOOM(8)));

@@ -13,6 +13,7 @@ public:
     void setIcon(QIcon i){this->icon=i;}
     void setText(QString s){this->text=s;}
     void setSubText(QString s){this->subText=s;}
+    bool transparent=false;
 signals:
 
 protected:

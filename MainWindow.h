@@ -26,7 +26,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    void onReceiveMsg(QString msg);
+    void onReceiveMsg(quint32 instanceId,QByteArray msg);
 private:
     QWidget *m_background=new QWidget(this);
     MainWidget *m_body=new MainWidget(this);

@@ -62,7 +62,7 @@
 #define CreatePtrA(t,name,data) SPTR(t) name=std::make_shared<t>(data)
 #define CreatePtr(t,name) SPTR(t) name=std::make_shared<t>()
 #define Wait(msec) QEventLoop loop;QTimer::singleShot(msec, &loop, SLOT(quit()));loop.exec()
-#define ShowOnTop Qt::WindowFlags flags=windowFlags();flags|=Qt::WindowStaysOnTopHint;setWindowFlags(flags);show();flags&=~Qt::WindowStaysOnTopHint;setWindowFlags(flags);showNormal()
+#define ShowOnTop(a) Qt::WindowFlags flags=a->windowFlags();flags|=Qt::WindowStaysOnTopHint;a->setWindowFlags(flags);a->show();flags&=~Qt::WindowStaysOnTopHint;a->setWindowFlags(flags);a->showNormal()
 
 void throwX(QString at,QString msg,quint8 level);
 

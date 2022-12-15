@@ -33,37 +33,44 @@ void startGame(){
     s->start(path,QStringList());
 }
 int main(int argc, char *argv[]){
-    SingleApplication a(argc,argv);
+    SingleApplication app(
+                argc,
+                argv,
+                true,
+                SingleApplication::User|
+                SingleApplication::ExcludeAppPath|
+                SingleApplication::ExcludeAppVersion);
+    if(app.isSecondary()){
+        app.sendMessage(app.applicationDirPath().toUtf8());
+        app.exit(0);
+        return 0;
+    }
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
     for (const QString &locale : uiLanguages) {
-        const QString baseName = "Xor7Alu_" + QLocale(locale).name();
+        const QString baseName = "Xor7Atlantis_" + QLocale(locale).name();
         if (translator.load(":/i18n/" + baseName)) {
-            a.installTranslator(&translator);
+            app.installTranslator(&translator);
             break;
         }
     }
+    MainWindow w;
+    QObject::connect(&app,&SingleApplication::instanceStarted,&w,[&](){ShowOnTop((&w));});
+    QObject::connect(&app,&SingleApplication::receivedMessage,&w,&MainWindow::onReceiveMsg);
+    w.show();
+    w.activateWindow();
     LaunchCore::getJava();
 //    AuthCore * ac=new AuthCore;
 //    ac->connect(ac,&AuthCore::authProgressUpdate,ac,[=](bool state,QString msg){
 //        qDebug()<<msg;
 //    });
 //    ac->ms_login();
-    MainWindow w;
-    a.connect(&a,&QtSingleApplication::messageReceived,&a,
-    [&](QString msg){
-        if(msg != qApp->applicationFilePath()){
-            w.onReceiveMsg(msg);
-        }
-    });
-    w.show();
-    w.activateWindow();
 //    Wait(1000);
 //    for(JavaInfo j:LaunchCore::javaInfoVec){
 //        qDebug()<<j.path<<" "<<j.fullVer;
 //    }
 //    startGame();
-    return a.exec();
+    return app.exec();
 }
 void throwX(QString at,QString msg,quint8 level){
     qDebug()<<at<<" "<<msg<<" "<<level;

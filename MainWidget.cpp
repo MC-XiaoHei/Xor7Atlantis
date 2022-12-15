@@ -67,37 +67,49 @@ void MainWidget::resizeEvent(QResizeEvent* event){
         t_sideBarProfile->installEventFilter(this);
         Page* home=new Page(this);
         QHBoxLayout *homeHLayout=new QHBoxLayout(home->body),
-                    *homeLaunchHLayout=new QHBoxLayout();
-        QVBoxLayout *homeVLayout=new QVBoxLayout();
+                    *homeSubHLayout=new QHBoxLayout();
+        QVBoxLayout *homeVLayout=new QVBoxLayout(),
+                    *homeSubVLayout=new QVBoxLayout();
         m_helloArea=new InfoButton(home->body);
+        m_helloArea->transparent=true;
         m_helloArea->setMinimumSize(ZOOM(320),
-                                  ZOOM(96));
+                                    ZOOM(96));
         m_helloArea->setText("你好，Neraxemaplefall");
         m_helloArea->setSubText("开发者   微软登录");
         m_helloArea->flush();
-        m_launchArea=new InfoButton(home->body);
-        m_launchArea->setMinimumSize(ZOOM(224),
-                                     ZOOM(96));
-        m_launchArea->setText("启动游戏");
-        m_launchArea->setSubText("1.18.2 Fabric");
-        m_launchArea->flush();
-        m_DIYArea=new QWidget(home->body);
-        m_DIYArea->setMinimumSize(ZOOM(320),
-                                  ZOOM(128));
-        m_homeLaunchChoose=new QPushButton(home->body);
-        m_homeLaunchChoose->setMinimumSize(ZOOM(96),
-                                           ZOOM(96));
+        m_homeLeftArea=new QWidget(home->body);
+        m_homeLeftArea->setMinimumSize(ZOOM(180),
+                                       ZOOM(240));
+        m_homeLeftArea->setStyleSheet(QString(
+            "background-color:rgba(255,255,255,64);"
+            "border-radius:%1px;")
+            .arg(ZOOM(8)));
+        m_homeRightTopArea=new QWidget(home->body);
+        m_homeRightTopArea->setMinimumSize(ZOOM(140),
+                                           ZOOM(180));
+        m_homeRightTopArea->setStyleSheet(QString(
+            "background-color:rgba(255,255,255,64);"
+            "border-radius:%1px;")
+            .arg(ZOOM(8)));
+        m_homeRightBottomArea=new QWidget(home->body);
+        m_homeRightBottomArea->setMinimumSize(ZOOM(180),
+                                              ZOOM(60));
+        m_homeRightBottomArea->setStyleSheet(QString(
+            "background-color:rgba(255,255,255,64);"
+            "border-radius:%1px;")
+            .arg(ZOOM(8)));
         homeHLayout->addStretch();
         homeHLayout->addLayout(homeVLayout);
         homeVLayout->addStretch();
         homeVLayout->addWidget(m_helloArea);
         homeVLayout->addSpacing(ZOOM(16));
-        homeVLayout->addWidget(m_DIYArea);
-        homeVLayout->addSpacing(ZOOM(16));
-        homeVLayout->addLayout(homeLaunchHLayout);
-        homeLaunchHLayout->addWidget(m_launchArea);
-        homeLaunchHLayout->addSpacing(ZOOM(16));
-        homeLaunchHLayout->addWidget(m_homeLaunchChoose);
+        homeVLayout->addLayout(homeSubHLayout);
+        homeSubHLayout->addWidget(m_homeLeftArea);
+        homeSubHLayout->addSpacing(ZOOM(16));
+        homeSubHLayout->addLayout(homeSubVLayout);
+        homeSubVLayout->addWidget(m_homeRightTopArea);
+        homeSubVLayout->addSpacing(ZOOM(16));
+        homeSubVLayout->addWidget(m_homeRightBottomArea);
         homeVLayout->addStretch();
         homeHLayout->addStretch();
         connect(m_helloArea,&InfoButton::clicked,this,[=](){Point;});
@@ -111,10 +123,6 @@ void MainWidget::resizeEvent(QResizeEvent* event){
         profile->flush();
         profile->hide();
         m_pages.insert("profile",profile);
-        m_homeLaunchChoose->setStyleSheet(QString(
-             "border-radius:%1px;"
-             "background-color:rgba(255,255,255,200);")
-             .arg(ZOOM(8)));
         UPDATE_OVER;
     }
     for(Page* page:qAsConst(m_pages)){
