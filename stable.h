@@ -22,37 +22,38 @@
 #include <QFileInfo>
 #include <QtNetwork>
 #include <QPainter>
+#include <cstdlib>
 #include <QWidget>
 #include <cassert>
 #include <QLabel>
 #include <QFile>
 #include <QUrl>
 
+#define AutomaticFileManagerCfgName "automaticFileManager.ini"
 #ifdef Q_OS_WIN
-
-#include <windowsx.h>
-#include <windows.h>
-
-#endif
-
-#ifdef Q_OS_WIN
+    #include <windowsx.h>
+    #include <windows.h>
     #define NATIVES "natives-windows"
     #define SHELL "cmd.exe"
     #define ESuffix ".bat"
+    #define AutomaticFileManagerCfgPath "C:/Xor 7 Studio/Xor 7 Atlantis/"
 #endif
 #ifdef Q_OS_LINUX
     #define NATIVES "natives-linux"
     #define SHELL "bash"
     #define ESuffix ".sh"
+    #define AutomaticFileManagerCfgPath "/opt/Xor 7 Studio/Xor 7 Atlantis/"
 #endif
 #ifdef Q_OS_OSX
     #define NATIVES "natives-osx"
+    #define AutomaticFileManagerCfgPath "/opt/Xor 7 Studio/Xor 7 Atlantis/"
 #endif
 #ifdef Q_OS_UNIX
     #define NATIVES "natives-unix"
+    #define AutomaticFileManagerCfgPath "/opt/Xor 7 Studio/Xor 7 Atlantis/"
 #endif
 
-#define X7A_VER QString("Snapshot 0.0.2")
+#define X7A_VER QString("Snapshot 0.0.3")
 #define MAIN_SIZE_X 840
 #define MAIN_SIZE_Y 480
 #define Point qDebug()<<__FILE__<<" "<<__LINE__

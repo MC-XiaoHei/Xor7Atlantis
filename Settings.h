@@ -16,5 +16,8 @@ signals:
 private:
     QMap<QString,QString> values;
 };
-
+Q_GLOBAL_STATIC(Settings,SettingsInstance);
+#define GET(key) SettingsInstance->get(key)
+#define REMOVE(key) SettingsInstance->remove(key)
+#define SET(key,value) SettingsInstance->set(key,value)
 #endif // SETTINGS_H

@@ -2,6 +2,7 @@
 #include "LaunchCore.h"
 #include "AuthCore.h"
 #include "MainWindow.h"
+#include "AutomaticInstanceManager.h"
 #include <QMessageBox>
 
 void startGame(){
@@ -33,6 +34,10 @@ void startGame(){
     s->start(path,QStringList());
 }
 int main(int argc, char *argv[]){
+    SingleApplication::setOrganizationDomain("xor7.tk");
+    SingleApplication::setOrganizationName("Xor 7 Studio");
+    SingleApplication::setApplicationName("Xor 7 Atlantis");
+    SingleApplication::setApplicationVersion(X7A_VER);
     SingleApplication app(
                 argc,
                 argv,
@@ -40,6 +45,31 @@ int main(int argc, char *argv[]){
                 SingleApplication::User|
                 SingleApplication::ExcludeAppPath|
                 SingleApplication::ExcludeAppVersion);
+    SET("instancePath",AutomaticInstanceManagerInstance->read());
+    QString path=GET("instancePath")+"Xor 7 Atlantis";
+    #ifdef Q_OS_WIN
+        path+=".exe";
+    #endif
+    if(SingleApplication::applicationFilePath()!=path){
+        QFile file(path);
+        if(!file.exists())
+            QFile::copy(SingleApplication::applicationFilePath(),
+                        path);
+        file.close();
+        QProcess::startDetached(path);
+        return 0;
+    }
+    QCommandLineParser parser;
+    parser.setApplicationDescription("line helper");
+    parser.addHelpOption();
+    parser.addVersionOption();
+    parser.addOption({
+        {"d","dir"},"set log output dir","filedir","C:\\"
+    });
+    parser.process(app);
+    QStringList positionList = parser.positionalArguments();
+    qDebug() << positionList;
+
     if(app.isSecondary()){
         app.sendMessage(app.applicationDirPath().toUtf8());
         app.exit(0);
@@ -54,6 +84,7 @@ int main(int argc, char *argv[]){
             break;
         }
     }
+
     MainWindow w;
     QObject::connect(&app,&SingleApplication::instanceStarted,&w,[&](){ShowOnTop((&w));});
     QObject::connect(&app,&SingleApplication::receivedMessage,&w,&MainWindow::onReceiveMsg);
