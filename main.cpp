@@ -56,16 +56,18 @@ int main(int argc, char *argv[]){
             QFile::copy(SingleApplication::applicationFilePath(),
                         path);
         file.close();
-        QProcess::startDetached(path);
-        return 0;
+//------------------DISABLE WHEN DEBUG------------------
+//        QProcess::startDetached(path);
+//        return 0;
+//------------------------------------------------------
     }
     QCommandLineParser parser;
     parser.setApplicationDescription("line helper");
     parser.addHelpOption();
     parser.addVersionOption();
-    parser.addOption({
-        {"d","dir"},"set log output dir","filedir","C:\\"
-    });
+//    parser.addOption({
+//        {"d","dir"},"set log output dir","filedir","C:\\"
+//    });
     parser.process(app);
     QStringList positionList = parser.positionalArguments();
     qDebug() << positionList;

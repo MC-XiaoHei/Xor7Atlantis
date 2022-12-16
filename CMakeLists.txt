@@ -17,7 +17,8 @@ set(QAPPLICATION_CLASS QApplication)
 add_subdirectory(Third-Party/SingleApplication)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
-find_package(Qt6 REQUIRED COMPONENTS Network)
+find_package(Qt6 REQUIRED COMPONENTS
+    Network)
 find_package(OpenSSL REQUIRED)
 
 set(TS_FILES Xor7Atlantis_zh_CN.ts)
@@ -28,7 +29,6 @@ if(OPENSSL_FOUND)
 endif()
 
 file(GLOB_RECURSE PROJECT_SOURCES *.cpp *.h *.qrc *.rc)
-
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Xor7Atlantis
         MANUAL_FINALIZATION
@@ -57,7 +57,9 @@ else()
 endif()
 
 #target_link_libraries(Xor7Atlantis SingleApplication::SingleApplication)
-target_link_libraries(Xor7Atlantis PRIVATE Qt6::Network)
+target_link_libraries(Xor7Atlantis PRIVATE
+    Qt6::Network
+)
 target_link_libraries(Xor7Atlantis PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 set_target_properties(Xor7Atlantis PROPERTIES
