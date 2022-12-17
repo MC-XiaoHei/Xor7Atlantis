@@ -285,7 +285,7 @@ QString LaunchCore::getStartCmd(VerInfo ver,LaunchInfo lInfo){
         ver.name,
         QString::number(lInfo.mem),
         #ifdef Q_OS_WIN
-            -XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump/*XX:-DontCompileHugeMethods*/""
+            "-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump"/*XX:-DontCompileHugeMethods*/""
         #else
             ""
         #endif
