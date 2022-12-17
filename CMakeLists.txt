@@ -19,14 +19,14 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt6 REQUIRED COMPONENTS
     Network)
-find_package(OpenSSL REQUIRED)
+#find_package(OpenSSL REQUIRED)
 
 set(TS_FILES Xor7Atlantis_zh_CN.ts)
 
-if(OPENSSL_FOUND)
-  include_directories(${OPENSSL_INCLUDE_DIRS})
-  message(STATUS "OpenSSL Found!")
-endif()
+#if(OPENSSL_FOUND)
+#  include_directories(${OPENSSL_INCLUDE_DIRS})
+#  message(STATUS "OpenSSL Found!")
+#endif()
 
 file(GLOB_RECURSE PROJECT_SOURCES *.cpp *.h *.qrc *.rc)
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

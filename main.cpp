@@ -16,9 +16,9 @@ void startGame(){
     launch.height=400;
     launch.width=640;
     launch.mem=1024;
-    launch.java=LaunchCore::javaInfoVec.at(2);
-    ver.name="1.7.10";
-    ver.gamePath="D:\\Xor 7 Championship Client\\.minecraft";
+    launch.java=LaunchCore::javaInfoVec.first();
+    ver.name="1.16.5";
+    ver.gamePath="/home/mc_xiaohei/.minecraft";
     LaunchCore::getJson(ver);
     QString cmd=LaunchCore::getStartCmd(ver,launch);
     QString path = ver.verPath()+QDir::toNativeSeparators("/X7A/");
@@ -98,11 +98,11 @@ int main(int argc, char *argv[]){
 //        qDebug()<<msg;
 //    });
 //    ac->ms_login();
-//    Wait(1000);
-//    for(JavaInfo j:LaunchCore::javaInfoVec){
-//        qDebug()<<j.path<<" "<<j.fullVer;
-//    }
-//    startGame();
+    Wait(1000);
+    for(JavaInfo j:LaunchCore::javaInfoVec){
+        qDebug()<<j.path<<" "<<j.fullVer;
+    }
+    startGame();
     return app.exec();
 }
 void throwX(QString at,QString msg,quint8 level){

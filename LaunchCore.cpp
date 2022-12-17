@@ -203,7 +203,13 @@ QStringList LaunchCore::getUnzipNativeCmd(VerInfo ver,QString npath){
     if(npath!=""){
         QStringList res;
         QString jarDir=QDir::toNativeSeparators(QString("%1/libraries/%2").arg(ver.gamePath,npath));
-        res.push_back(QDir::toNativeSeparators(QString("7z e \"%1\" -o\"%2/natives\" *dll -r -y").arg(jarDir,ver.verPath())));
+        res.push_back(QDir::toNativeSeparators(QString("7z e \"%1\" -o\"%2/natives\" *%3 -r -y").arg(jarDir,ver.verPath(),
+                                                                                #ifdef Q_OS_WIN
+                                                                                    "dll"
+                                                                                #else
+                                                                                    "so"
+                                                                                #endif
+        )));
         res.push_back(QDir::toNativeSeparators(QString("7z e \"%1\" -o\"%2/natives/sha1\" *sha1 -r -y").arg(jarDir,ver.verPath())));
         return res;
     }else{
@@ -235,8 +241,8 @@ void LaunchCore::reloadNatives(VerInfo ver){
     s->waitForFinished();
 }
 void LaunchCore::getJava(){
+    checkJavaInPath("java");
     #ifdef Q_OS_WIN
-        checkJavaInPath("java");
         checkJavaInPath(qgetenv("JAVA_HOME")+"bin\\java");
         CreatePtr(Shell,s);
         s->connect(s.get(),&Shell::onReceive,[=](QString data){
@@ -247,7 +253,6 @@ void LaunchCore::getJava(){
         });
         s->start("where",QStringList("java.exe"));
         Wait(1000);
-//        s->waitForFinished();
     #endif
 }
 QString LaunchCore::getStartCmd(VerInfo ver,LaunchInfo lInfo){
@@ -275,18 +280,28 @@ QString LaunchCore::getStartCmd(VerInfo ver,LaunchInfo lInfo){
         " -Dfml.ignoreInvalidMinecraftCertificates=true"
         " -Dfml.ignorePatchDiscrepancies=true"
         " -Dlog4j2.formatMsgNoLookups=true"
-        " -XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump"
-        "%4").arg(
+        " %4").arg(
         lInfo.java.path,
         ver.name,
         QString::number(lInfo.mem),
-        /*XX:-DontCompileHugeMethods*/"")));
+        #ifdef Q_OS_WIN
+            -XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump/*XX:-DontCompileHugeMethods*/""
+        #else
+            ""
+        #endif
+        )));
     QVector<GameClassInfo> gcInfo=jInfo.gameClass;
     if(haveNatives(ver)){
         for(quint16 i=0;i<gcInfo.size();i++){
             if((!gcInfo[i].isNatives)&&!gcInfo[i].jump)
                 cp+=QDir::toNativeSeparators(QString(
-                    "%1/libraries/%2;").arg(ver.gamePath,gcInfo[i].path));
+                    "%1/libraries/%2%3").arg(ver.gamePath,gcInfo[i].path,
+                             #ifdef Q_OS_WIN
+                                ";"
+                             #else
+                                ":"
+                             #endif
+                ));
         }
     }else reloadNatives(ver);
     cp+=QDir::toNativeSeparators(QString("%1/%2.jar").arg(ver.verPath(),ver.name));

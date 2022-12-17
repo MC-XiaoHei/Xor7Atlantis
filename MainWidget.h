@@ -1,6 +1,7 @@
 #ifndef MAINWIDGET_H
 #define MAINWIDGET_H
 
+#include "SideBarBtn.h"
 #include "stable.h"
 #include "Zoomer.h"
 #include "InfoButton.h"
@@ -13,8 +14,9 @@ public:
     explicit MainWidget(QWidget *parent = nullptr);
     void setBackground(QImage bg){this->m_bg=bg;}
     void setSideBarInfo();
-    void onHomeBtnCicked();
-    void onProfileBtnCicked();
+    void onHomeBtnClicked();
+    void onProfileBtnClicked();
+    void onDownloadBtnClicked();
     void switchPage(QString name);
 signals:
     void closeWindow();
@@ -27,18 +29,20 @@ private:
             *m_homeRightBottomArea,
             *m_homeLeftArea;
     InfoButton *m_helloArea;
-    QLabel *m_background=new QLabel(this),
+    QLabel *m_background=new QLabel(this)/*,
            *t_sideBarHome=new QLabel("主页"),
-           *t_sideBarProfile=new QLabel("账号管理");
+           *t_sideBarProfile=new QLabel("账号管理")*/;
     QPushButton *m_titleBar=new QPushButton(this),
                 *m_titleBarClose=new QPushButton(),
                 *m_titleBarMin=new QPushButton(),
                 *m_sideBar=new QPushButton(this),
                 *m_sideBarInfo=new QPushButton(this),
-                *m_sideBarHome=new QPushButton(),
-                *m_sideBarProfile=new QPushButton(),
+//                *m_sideBarHome=new QPushButton(),
+//                *m_sideBarProfile=new QPushButton(),
+//                *m_sideBarDownload=new QPushButton(),
                 *m_sideBarMenu=new QPushButton();
     QMap<QString,Page*> m_pages;
+    QMap<QString,SideBarBtn*> m_sideBarBtns;
     QString m_nowPage="home";
 protected:
     void resizeEvent(QResizeEvent* event);

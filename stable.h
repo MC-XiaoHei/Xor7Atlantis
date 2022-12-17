@@ -1,10 +1,10 @@
 #ifndef STABLE_H
 #define STABLE_H
 
-#include "Third-Party/SingleApplication/SingleApplication"
-#include "Third-Party/httpserver/staticfilecontroller.h"
-#include "Third-Party/httpserver/httprequesthandler.h"
-#include "Third-Party/HttpServer/httplistener.h"
+#include "./Third-Party/SingleApplication/SingleApplication"
+#include "./Third-Party/HttpServer/staticfilecontroller.h"
+#include "./Third-Party/HttpServer/httprequesthandler.h"
+#include "./Third-Party/HttpServer/httplistener.h"
 #include <QDesktopServices>
 #include <QGraphicsEffect>
 #include <QApplication>
@@ -48,12 +48,8 @@
     #define NATIVES "natives-osx"
     #define AutomaticFileManagerCfgPath "/opt/Xor 7 Studio/Xor 7 Atlantis/"
 #endif
-#ifdef Q_OS_UNIX
-    #define NATIVES "natives-unix"
-    #define AutomaticFileManagerCfgPath "/opt/Xor 7 Studio/Xor 7 Atlantis/"
-#endif
 
-#define X7A_VER QString("Snapshot 0.0.3")
+#define X7A_VER QString("Snapshot 0.0.4")
 #define MAIN_SIZE_X 840
 #define MAIN_SIZE_Y 480
 #define Point qDebug()<<__FILE__<<" "<<__LINE__
