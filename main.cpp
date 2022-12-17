@@ -57,8 +57,8 @@ int main(int argc, char *argv[]){
                         path);
         file.close();
 //------------------DISABLE WHEN DEBUG------------------
-//        QProcess::startDetached(path);
-//        return 0;
+        QProcess::startDetached(path);
+        return 0;
 //------------------------------------------------------
     }
     QCommandLineParser parser;
@@ -98,11 +98,11 @@ int main(int argc, char *argv[]){
 //        qDebug()<<msg;
 //    });
 //    ac->ms_login();
-    Wait(1000);
-    for(JavaInfo j:LaunchCore::javaInfoVec){
-        qDebug()<<j.path<<" "<<j.fullVer;
-    }
-    startGame();
+//    Wait(1000);
+//    for(JavaInfo j:LaunchCore::javaInfoVec){
+//        qDebug()<<j.path<<" "<<j.fullVer;
+//    }
+//    startGame();
     return app.exec();
 }
 void throwX(QString at,QString msg,quint8 level){
