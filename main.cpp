@@ -57,8 +57,8 @@ int main(int argc, char *argv[]){
                         path);
         file.close();
 //------------------DISABLE WHEN DEBUG------------------
-        QProcess::startDetached(path);
-        return 0;
+//        QProcess::startDetached(path);
+//        return 0;
 //------------------------------------------------------
     }
     QCommandLineParser parser;
