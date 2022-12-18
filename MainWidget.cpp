@@ -4,42 +4,40 @@
 MainWidget::MainWidget(QWidget *parent)
     : QWidget{parent}
 {
-    parent->installEventFilter(this);
-    this->installEventFilter(this);
+    this->setMouseTracking(true);
     m_sideBarInfo->setParent(parent);
     m_titleBarClose->setParent(parent);
     m_titleBarMin->setParent(parent);
     m_sideBarMenu->setParent(parent);
-//    m_sideBarHome->setParent(parent);
-//    m_sideBarProfile->setParent(parent);
-//    m_sideBarDownload->setParent(parent);
-//    t_sideBarHome->setParent(m_sideBarInfo);
-//    t_sideBarProfile->setParent(m_sideBarInfo);
     SideBarBtn *home=new SideBarBtn(":/Images/Icon/home.png","主页",1,m_sideBarInfo,parent);
+    m_sideBarBtns.insert("home",home);
     connect(home,&SideBarBtn::clicked,this,[=](){
-        Point;
+        switchPage("home");
     });
-    home->refresh();
+    SideBarBtn *profile=new SideBarBtn(":/Images/Icon/profile.png","账号管理",2,m_sideBarInfo,parent);
+    m_sideBarBtns.insert("profile",profile);
+    connect(profile,&SideBarBtn::clicked,this,[=](){
+        switchPage("profile");
+    });
     m_sideBarMenu->setIcon(QIcon(":/Images/Icon/menu.png"));
-//    m_sideBarHome->setIcon(QIcon(":/Images/Icon/home.png"));
-//    m_sideBarProfile->setIcon(QIcon(":/Images/Icon/profile.png"));
     m_titleBarMin->setIcon(QIcon(":/Images/Icon/min.png"));
     m_titleBarClose->setIcon(QIcon(":/Images/Icon/close.png"));
-//    m_sideBarDownload->setIcon(QIcon(":/Images/Icon/download.png"));
     m_sideBarInfo->setStyleSheet("background-color:rgb(255,255,255);"
                                  "border-radius:0px;");
     m_titleBarMin->setStyleSheet("background-color:rgba(255,255,255,0);");
     m_sideBarMenu->setStyleSheet("background-color:rgba(255,255,255,0);");
-//    m_sideBarHome->setStyleSheet("background-color:rgba(255,255,255,0);");
-//    m_sideBarProfile->setStyleSheet("background-color:rgba(255,255,255,0);");
-//    m_sideBarDownload->setStyleSheet("background-color:rgba(255,255,255,0);");
     setBackground(QImage(":/Images/background.png"));
     connect(m_titleBarClose,&QPushButton::clicked,this,&MainWidget::closeWindow);
     connect(m_titleBarMin,&QPushButton::clicked,this,&MainWidget::minimizeWindow);
     connect(m_sideBarMenu,&QPushButton::clicked,this,&MainWidget::setSideBarInfo);
-//    connect(m_sideBarHome,&QPushButton::clicked,this,&MainWidget::onHomeBtnClicked);
-//    connect(m_sideBarProfile,&QPushButton::clicked,this,&MainWidget::onProfileBtnClicked);
-//    connect(m_sideBarDownload,&QPushButton::clicked,this,&MainWidget::onDownloadBtnClicked);
+    startTimer(100);
+}
+void MainWidget::timerEvent(QTimerEvent *e){
+    Q_UNUSED(e);
+    if(this->mapFromGlobal(QCursor::pos()).
+            x()>ZOOM(176) &&
+            sideBarInfoVisible)
+        setSideBarInfo();
 }
 void MainWidget::switchPage(QString name){
     if(name==m_nowPage) return;
@@ -47,36 +45,10 @@ void MainWidget::switchPage(QString name){
     m_pages.value(name)->flashShow();
     m_nowPage=name;
 }
-void MainWidget::onHomeBtnClicked(){
-    switchPage("home");
-}
-void MainWidget::onProfileBtnClicked(){
-    switchPage("profile");
-}
-void MainWidget::onDownloadBtnClicked(){
-    switchPage("download");
-}
-bool MainWidget::eventFilter(QObject *watched, QEvent *event){
-//    if(watched==t_sideBarHome &&
-//       event->type()==QEvent::MouseButtonPress)
-//        onHomeBtnClicked();
-//    if(watched==t_sideBarProfile &&
-//       event->type()==QEvent::MouseButtonPress)
-//        onProfileBtnClicked();
-    return false;
-}
 void MainWidget::resizeEvent(QResizeEvent* event){
     Q_UNUSED(event);
     ON_ZOOM_UPDATE{
         m_pages.clear();
-//        QFont font;
-//        font.setPixelSize(ZOOM(16));
-//        t_sideBarHome->setFont(font);
-//        t_sideBarHome->setAlignment(Qt::AlignVCenter);
-//        t_sideBarHome->installEventFilter(this);
-//        t_sideBarProfile->setFont(font);
-//        t_sideBarProfile->setAlignment(Qt::AlignVCenter);
-//        t_sideBarProfile->installEventFilter(this);
         Page* home=new Page(this);
         QHBoxLayout *homeHLayout=new QHBoxLayout(home->body),
                     *homeSubHLayout=new QHBoxLayout();
@@ -152,14 +124,6 @@ void MainWidget::resizeEvent(QResizeEvent* event){
                      0);
     m_sideBarMenu->move(ZOOM(8),
                         ZOOM(8));
-//    m_sideBarHome->move(ZOOM(16),
-//                        ZOOM(62));
-//    t_sideBarHome->move(0,
-//                        ZOOM(54));
-//    m_sideBarProfile->move(ZOOM(16),
-//                           ZOOM(102));
-//    t_sideBarProfile->move(0,
-//                           ZOOM(94));
     m_titleBar->resize(this->width()-ZOOM(48),
                        ZOOM(48));
     m_titleBarClose->move(this->width()-ZOOM(40),
@@ -188,12 +152,6 @@ void MainWidget::resizeEvent(QResizeEvent* event){
     m_sideBarMenu->resize(barBtnSize);
     m_sideBarMenu->setIconSize(barBtnIconSize);
     barBtnSize=barBtnIconSize;
-//    m_sideBarHome->resize(barBtnSize);
-//    m_sideBarHome->setIconSize(barBtnIconSize);
-//    t_sideBarHome->resize(barTextSize);
-//    m_sideBarProfile->resize(barBtnSize);
-//    m_sideBarProfile->setIconSize(barBtnIconSize);
-//    t_sideBarProfile->resize(barTextSize);
     m_background->resize(this->width()-ZOOM(48),
                          this->height());
     m_background->move(ZOOM(48),0);
@@ -229,10 +187,11 @@ void MainWidget::resizeEvent(QResizeEvent* event){
          "background-color:rgba(255,255,255,0);"
          "border-radius:%1px")
          .arg(ZOOM(10)));
+    for(SideBarBtn *btn:m_sideBarBtns)
+        btn->refresh();
     m_sideBarMenu->raise();
     m_titleBarClose->raise();
     m_titleBarMin->raise();
-//    t_sideBarHome->raise();
 }
 void MainWidget::setSideBarInfo(){
     if(flash) return;

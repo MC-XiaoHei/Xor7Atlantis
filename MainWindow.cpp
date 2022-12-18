@@ -1,6 +1,6 @@
 ﻿#include "MainWindow.h"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
+MainWindow::MainWindow(QWidget *parent) : QWidget(parent){
     this->setWindowIcon(QIcon(":/Images/Icon/favicon.gif"));
     this->setMinimumSize(MAIN_SIZE_X,MAIN_SIZE_Y);
     this->setMouseTracking(true);
@@ -104,7 +104,8 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event){
         }
         setGeometry(rc);
         update();
-    }
+    }else
+        event->ignore();
 }
 void MainWindow::mouseReleaseEvent(QMouseEvent *event){
     m_windowAction=Action::NOTHING;

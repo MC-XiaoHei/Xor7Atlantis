@@ -21,7 +21,7 @@ enum class CursorPosFlag{
     BOTTOM,
     RBOTTOM
 };
-class MainWindow : public QMainWindow
+class MainWindow : public QWidget
 {
     Q_OBJECT
 public:
