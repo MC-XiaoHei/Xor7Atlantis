@@ -2,7 +2,6 @@
 #define AUTOMATICINSTANCEMANAGER_H
 
 #include "stable.h"
-#include "Settings.h"
 
 class AutomaticInstanceManager : public QObject
 {

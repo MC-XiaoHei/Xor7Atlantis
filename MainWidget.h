@@ -4,7 +4,6 @@
 #include "SideBarBtn.h"
 #include "stable.h"
 #include "Zoomer.h"
-#include "InfoButton.h"
 #include "Page.h"
 
 class MainWidget : public QWidget
@@ -12,32 +11,30 @@ class MainWidget : public QWidget
     Q_OBJECT
 public:
     explicit MainWidget(QWidget *parent = nullptr);
-    void setBackground(QImage bg){this->m_bg=bg;}
-    void setSideBarInfo();
+    void setBackground(QImage bg) { this->m_bg = bg; }
     void switchPage(QString name);
+    void onTimerEvent();
 signals:
     void closeWindow();
     void minimizeWindow();
 private:
-    bool sideBarInfoVisible=false,
-         flash=false;
+    bool flash=false;
+    quint8 closeBtnAlpha=0,
+           minisizeBtnAlpha=0;
     QImage m_bg;
-    QWidget *m_homeRightTopArea,
-            *m_homeRightBottomArea,
-            *m_homeLeftArea;
-    InfoButton *m_helloArea;
-    QLabel *m_background=new QLabel(this);
-    QPushButton *m_titleBar=new QPushButton(this),
-                *m_titleBarClose=new QPushButton(),
-                *m_titleBarMin=new QPushButton(),
-                *m_sideBar=new QPushButton(this),
-                *m_sideBarInfo=new QPushButton(this),
-                *m_sideBarMenu=new QPushButton();
-    QMap<QString,Page*> m_pages;
+    QLabel *m_background=new QLabel(this),
+           *m_verInfo=new QLabel();
+    QPushButton *m_mask=new QPushButton(this),
+                *m_closeBtn=new QPushButton(),
+                *m_minisizeBtn=new QPushButton(),
+                *m_closeBtnBg=new QPushButton(),
+                *m_minisizeBtnBg=new QPushButton();
     QMap<QString,SideBarBtn*> m_sideBarBtns;
-    QString m_nowPage="home";
+    QMap<QString,Page*> m_pages;
+    QString m_nowPage="home",
+            m_nowSideBarBtn="home";
 protected:
-    void timerEvent(QTimerEvent *e);
+    void timerEvent(QTimerEvent *event){onTimerEvent();}
     void resizeEvent(QResizeEvent* event);
 };
 

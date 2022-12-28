@@ -43,10 +43,8 @@ int main(int argc, char *argv[]){
                 argv,
                 true,
                 SingleApplication::User|
-                SingleApplication::ExcludeAppPath|
                 SingleApplication::ExcludeAppVersion);
-    SET("instancePath",AutomaticInstanceManagerInstance->read());
-    QString path=GET("instancePath")+"Xor 7 Atlantis";
+    QString path=AutomaticInstanceManagerInstance->read()+"Xor 7 Atlantis";
     #ifdef Q_OS_WIN
         path+=".exe";
     #endif
@@ -86,7 +84,6 @@ int main(int argc, char *argv[]){
             break;
         }
     }
-
     MainWindow w;
     QObject::connect(&app,&SingleApplication::instanceStarted,&w,[&](){ShowOnTop((&w));});
     QObject::connect(&app,&SingleApplication::receivedMessage,&w,&MainWindow::onReceiveMsg);

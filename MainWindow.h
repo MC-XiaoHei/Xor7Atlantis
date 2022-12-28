@@ -5,7 +5,7 @@
 #include "MainWidget.h"
 
 struct SideWidth{
-    quint8 top=48,
+    quint8 top=32,
            bottom=16,
            right=16;
 };
@@ -28,7 +28,6 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     void onReceiveMsg(quint32 instanceId,QByteArray msg);
 private:
-    QWidget *m_background=new QWidget(this);
     MainWidget *m_body=new MainWidget(this);
     SideWidth m_sideWidth;
     Action m_windowAction=Action::NOTHING;

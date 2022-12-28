@@ -1,15 +1,18 @@
 <RCC>
     <qresource prefix="/Images">
         <file>background.png</file>
-        <file>Icon/menu.png</file>
-        <file>Icon/close.png</file>
-        <file>Icon/min.png</file>
-        <file>Icon/download.png</file>
-        <file>Icon/home.png</file>
-        <file>Icon/settings.png</file>
-        <file>Icon/games.png</file>
-        <file>Icon/profile.png</file>
         <file>Icon/icon.gif</file>
         <file>Icon/icon.ico</file>
+        <file>alex.png</file>
+        <file>steve.png</file>
+        <file>Icon/Help.png</file>
+        <file>Icon/Home.png</file>
+        <file>Icon/InstanceList.png</file>
+        <file>Icon/InstanceSettings.png</file>
+        <file>Icon/MultiplayerGame.png</file>
+        <file>Icon/ProfileManage.png</file>
+        <file>Icon/Settings.png</file>
+        <file>Icon/Close.png</file>
+        <file>Icon/Minisize.png</file>
     </qresource>
 </RCC>

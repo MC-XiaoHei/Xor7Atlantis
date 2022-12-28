@@ -11,13 +11,6 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent){
     m_rsideLabel->setCursor(Qt::SizeHorCursor);
     m_rbottomLabel->setCursor(Qt::SizeFDiagCursor);
     m_bottomLabel->setCursor(Qt::SizeVerCursor);
-    m_background->setStyleSheet(QString(
-        "border-radius:%1px;background-color:rgb(255,255,255);").arg(qCeil(ZOOM(8))));
-    QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect();
-    shadow->setBlurRadius(ZOOM(8));
-    shadow->setColor(Qt::black);
-    shadow->setOffset(0);
-    m_background->setGraphicsEffect(shadow);
     connect(m_body,&MainWidget::closeWindow,this,&MainWindow::close);
     connect(m_body,&MainWidget::minimizeWindow,this,&MainWindow::minimizeWindow);
     connect(this,&MainWindow::closeWindow,this,[=](){
@@ -116,12 +109,7 @@ void MainWindow::closeEvent(QCloseEvent *event){
     event->ignore();
 }
 void MainWindow::resizeEvent(QResizeEvent *event){
-    m_background->resize(this->size().width()-2*ZOOM(8),
-                         this->size().height()-2*ZOOM(8));
-    m_background->move(ZOOM(8),ZOOM(8));
-    m_body->resize(this->size().width()-2*ZOOM(8),
-                   this->size().height()-2*ZOOM(8));
-    m_body->setParent(m_background);
+    m_body->resize(this->size());
     m_titleLable->resize(this->size().width(),ZOOM(m_sideWidth.top));
     m_rsideLabel->move(this->size().width()-ZOOM(m_sideWidth.right),
                        m_sideWidth.top);
@@ -135,7 +123,6 @@ void MainWindow::resizeEvent(QResizeEvent *event){
                         this->size().height()-ZOOM(m_sideWidth.bottom));
     m_bottomLabel->resize(this->size().width()-ZOOM(m_sideWidth.right),
                           ZOOM(m_sideWidth.bottom));
-    m_background->show();
     m_rsideLabel->show();
     m_bottomLabel->show();
     m_rbottomLabel->show();
@@ -150,17 +137,3 @@ void MainWindow::resizeEvent(QResizeEvent *event){
     setMask(mask);
     event->ignore();
 }
-//void MainWindow::moveEx(QWidget *w,quint16 x,quint16 y,qint16 mx,qint16 my,quint16 msec,const QEasingCurve &easing,bool control){
-//    QPropertyAnimation *Animation=new QPropertyAnimation(w,"pos",w);
-//    Animation->setDuration(msec);
-//    Animation->setStartValue(QPoint(x,y));
-//    Animation->setEndValue(QPoint(mx,my));
-//    Animation->setEasingCurve(easing);
-//    Animation->start();
-//    connect(Animation,&QPropertyAnimation::stateChanged,w,[=](){
-//        if(control) flash=false;
-//        w->hide();
-//        w->move(x,y);
-//    });
-//    return;
-//}

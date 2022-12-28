@@ -52,18 +52,18 @@ void AuthCore::ms_login(){
     bool flag=false;
     for(QJsonValueRef ref:skins){
         QJsonObject obj=ref.toObject();
-        if(obj.value("state").toString()=="ACTIVE"){
+        if(obj.value("state")=="ACTIVE"){
             m_profile->skinUrl=obj.value("url").toString();
             flag=true;
             break;
         }
     }
-    if(!!flag){
+    if(!flag){
         this->m_errState=true;
         emit authProgressUpdate(true,"微软登录:成功获取到Minecraft Profile,但没有活动状态的皮肤","登录成功");
-        return;
+    }else{
+        emit authProgressUpdate(true,"微软登录:成功获取到Minecraft Profile","登录成功");
     }
-    emit authProgressUpdate(true,"微软登录:成功获取到Minecraft Profile","登录成功");
 });});});});});});}
 void AuthCore::ms_getCode(std::function<void(bool,QString)> func){
     QTcpServer *server=new QTcpServer();

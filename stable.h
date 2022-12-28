@@ -49,7 +49,7 @@
     #define AutomaticFileManagerCfgPath "/opt/Xor 7 Studio/Xor 7 Atlantis/"
 #endif
 
-#define X7A_VER QString("Snapshot 0.0.4")
+#define X7A_VER QString("Snapshot 0.1.0")
 #define MAIN_SIZE_X 840
 #define MAIN_SIZE_Y 480
 #define Point qDebug()<<__FILE__<<" "<<__LINE__
@@ -62,6 +62,7 @@
 #define ShowOnTop(a) Qt::WindowFlags flags=a->windowFlags();flags|=Qt::WindowStaysOnTopHint;a->setWindowFlags(flags);a->show();flags&=~Qt::WindowStaysOnTopHint;a->setWindowFlags(flags);a->showNormal()
 
 void throwX(QString at,QString msg,quint8 level);
+QString cfgPath=AutomaticFileManagerCfgPath"config/";
 
 #endif // STABLE_H
 
