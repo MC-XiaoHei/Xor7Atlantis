@@ -11,11 +11,11 @@ public:
     void flush();
     void flashHide();
     void flashShow();
-    QWidget *body=new QWidget(this);
+    QWidget *body(){return m_body;}
 signals:
 
 private:
-
+    QWidget *m_body=new QWidget(this);
 };
 
 #endif // PAGE_H

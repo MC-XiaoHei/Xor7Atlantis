@@ -2,7 +2,6 @@
 
 bool DownloadCore::CheckFileHash(QString srcDir,QString hash){
     QFile file(srcDir);
-    qDebug() << "Checking file dir = "<<srcDir;
     QCryptographicHash Hash(QCryptographicHash::Sha1);
     if(file.open(QIODevice::ReadOnly)){
         while(file.atEnd() == false){
@@ -11,12 +10,11 @@ bool DownloadCore::CheckFileHash(QString srcDir,QString hash){
         }
     }
     else{
-        qDebug() << "File open failed";
+        throwX("文件SHA1哈希检验","无法打开文件："+srcDir,0);
         return false;
     }
     QString sha1 = Hash.result();
     if(sha1==hash) return true;
-    qDebug() << "SHA1 wrong";
     return false;
 }
 DownloadCore::DownloadCore(QObject *parent) :QObject(parent){

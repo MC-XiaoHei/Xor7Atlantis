@@ -22,9 +22,9 @@ void DownloadThread::startDownload(int _index, QString _url, QFile *_file, qint6
     QString range = QString( "bytes=%0-%1" ).arg( startPoint + readySize ).arg( endPoint );
     request.setRawHeader("Range", range.toLatin1());
     reply = manager->get(request);
-    connect(reply,SIGNAL(finished()),SLOT(finishedSlot()));
-    connect(reply,SIGNAL(readyRead()),SLOT(readyReadSlot()));
-    connect(reply,SIGNAL(error(QNetworkReply::NetworkError)),SLOT(errorSlot(QNetworkReply::NetworkError)));
+    connect(reply,&QNetworkReply::finished,this,&DownloadThread::finishedSlot);
+    connect(reply,&QNetworkReply::readyRead,this,&DownloadThread::readyReadSlot);
+    connect(reply,&QNetworkReply::errorOccurred,this,&DownloadThread::errorSlot);
     state = Downloading;
     emit progressChange(index,startPoint,endPoint,readySize);
 }

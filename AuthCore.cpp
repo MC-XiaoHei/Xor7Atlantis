@@ -3,6 +3,15 @@
 
 AuthCore::AuthCore(QObject *parent)
     : QObject{parent}{
+    memset(&profile, 0, sizeof(profile));
+}
+void AuthCore::offline_login(QString username,bool demo){
+    profile.authServer="offline";
+    profile.username=username;
+    profile.uuid=getOfflinePlayerUUID(username);
+    profile.demo=demo;
+    parseSkin();
+    emit finished();
 }
 void AuthCore::ms_login(){
     emit authProgressUpdate(true,"微软登录:正在获取微软验证Code","正在获取微软验证Code...");
@@ -12,29 +21,29 @@ void AuthCore::ms_login(){
         emit authProgressUpdate(false,"微软登录:用户已取消登录.","失败");
         return;
     }
-    m_profile->msCode=data;
+    profile.msCode=data;
     emit authProgressUpdate(true,"微软登录:成功获取到微软验证Code","正在获取微软验证Token...");
     ms_getMSToken([=](QNetworkReply* reply){
     QJsonDocument *doc=new QJsonDocument(QJsonDocument::fromJson(reply->readAll()));
-    m_profile->accessToken=doc->object().value("access_token").toString();
-    m_profile->refreshToken=doc->object().value("refresh_token").toString();
+    profile.accessToken=doc->object().value("access_token").toString();
+    profile.refreshToken=doc->object().value("refresh_token").toString();
     emit authProgressUpdate(true,"微软登录:成功获取到微软验证Token","正在获取Xbox Live验证Token...");
     ms_getXBLToken([=](QNetworkReply* reply){
     QJsonDocument *doc=new QJsonDocument(QJsonDocument::fromJson(reply->readAll()));
-    m_profile->xblToken=doc->object().value("Token").toString();
-    m_profile->userHash=doc->object()
+    profile.xblToken=doc->object().value("Token").toString();
+    profile.userHash=doc->object()
             .value("DisplayClaims").toObject()
             .value("xui").toArray()
             .begin()->toObject().value("uhs").toString();
     emit authProgressUpdate(true,"微软登录:成功获取到Xbox Live验证Token","正在获取XSTS验证Token...");
     ms_getXSTSToken([=](QNetworkReply* reply){
     QJsonDocument *doc=new QJsonDocument(QJsonDocument::fromJson(reply->readAll()));
-    m_profile->xstsToken=doc->object().value("Token").toString();
+    profile.xstsToken=doc->object().value("Token").toString();
     QString userHash=doc->object()
             .value("DisplayClaims").toObject()
             .value("xui").toArray()
             .begin()->toObject().value("uhs").toString();
-    if(userHash!=m_profile->userHash){
+    if(userHash!=profile.userHash){
         this->m_errState=true;
         emit authProgressUpdate(false,"微软登录:微软API返回的两个User Hash不匹配.","失败");
         return;
@@ -42,18 +51,18 @@ void AuthCore::ms_login(){
     emit authProgressUpdate(true,"微软登录:成功获取到XSTS验证Token","正在获取Minecraft Token...");
     ms_getMCToken([=](QNetworkReply* reply){
     QJsonDocument *doc=new QJsonDocument(QJsonDocument::fromJson(reply->readAll()));
-    m_profile->mcAccessToken=doc->object().value("access_token").toString();
+    profile.mcAccessToken=doc->object().value("access_token").toString();
     emit authProgressUpdate(true,"微软登录:成功获取到Minecraft Token","正在获取Minecraft Profile...");
     ms_getUUID([=](QNetworkReply* reply){
     QJsonDocument *doc=new QJsonDocument(QJsonDocument::fromJson(reply->readAll()));
-    m_profile->uuid=doc->object().value("id").toString();
-    m_profile->username=doc->object().value("name").toString();
+    profile.uuid=doc->object().value("id").toString();
+    profile.username=doc->object().value("name").toString();
     QJsonArray skins=doc->object().value("skins").toArray();
     bool flag=false;
     for(QJsonValueRef ref:skins){
         QJsonObject obj=ref.toObject();
         if(obj.value("state")=="ACTIVE"){
-            m_profile->skinUrl=obj.value("url").toString();
+            profile.skinUrl=obj.value("url").toString();
             flag=true;
             break;
         }
@@ -61,8 +70,12 @@ void AuthCore::ms_login(){
     if(!flag){
         this->m_errState=true;
         emit authProgressUpdate(true,"微软登录:成功获取到Minecraft Profile,但没有活动状态的皮肤","登录成功");
+        emit finished();
     }else{
+        profile.authServer="microsoft";
+        parseSkin();
         emit authProgressUpdate(true,"微软登录:成功获取到Minecraft Profile","登录成功");
+        emit finished();
     }
 });});});});});});}
 void AuthCore::ms_getCode(std::function<void(bool,QString)> func){
@@ -99,7 +112,7 @@ void AuthCore::ms_getMSToken(std::function<void(QNetworkReply*)> func){
                                       "code=%1&"
                                       "grant_type=authorization_code&"
                                       "redirect_uri=%2&"
-                                      "scope=XboxLive.signin%20XboxLive.offline_access").arg(m_profile->msCode).arg(this->redirectUri).toUtf8(),func);
+                                      "scope=XboxLive.signin%20XboxLive.offline_access").arg(profile.msCode).arg(this->redirectUri).toUtf8(),func);
 }
 void AuthCore::ms_getXBLToken(std::function<void(QNetworkReply*)> func){
     QMap<QString,QString> header;
@@ -114,7 +127,7 @@ void AuthCore::ms_getXBLToken(std::function<void(QNetworkReply*)> func){
     obj["Properties"]=properties;
     doc.setObject(obj);
     QString request=doc.toJson();
-    request=request.arg(m_profile->accessToken);
+    request=request.arg(profile.accessToken);
     AuthCore::post("https://user.auth.xboxlive.com/user/authenticate",
                    header,request.toUtf8(),func);
 }
@@ -124,7 +137,7 @@ void AuthCore::ms_getXSTSToken(std::function<void(QNetworkReply*)> func){
     QJsonDocument doc;
     QJsonObject obj,properties;
     QJsonArray userTokens;
-    userTokens.append(m_profile->xblToken);
+    userTokens.append(profile.xblToken);
     properties["SandboxId"]="RETAIL";
     properties["UserTokens"]=userTokens;
     obj["RelyingParty"]="rp://api.minecraftservices.com/";
@@ -140,8 +153,7 @@ void AuthCore::ms_getMCToken(std::function<void(QNetworkReply*)> func){
     QJsonDocument doc;
     QJsonObject obj;
     obj["identityToken"]=QString("XBL3.0 x=%1;%2")
-            .arg(m_profile->userHash)
-            .arg(m_profile->xstsToken);
+            .arg(profile.userHash,profile.xstsToken);
     doc.setObject(obj);
     AuthCore::post("https://api.minecraftservices.com/authentication/login_with_xbox",
                    header,doc.toJson(),func);
@@ -149,15 +161,61 @@ void AuthCore::ms_getMCToken(std::function<void(QNetworkReply*)> func){
 void AuthCore::ms_getUUID(std::function<void(QNetworkReply*)> func){
     QMap<QString,QString> header;
     header["Accept"]="application/json";
-    header["Authorization"]=QString("Bearer %1").arg(m_profile->mcAccessToken);
+    header["Authorization"]=QString("Bearer %1").arg(profile.mcAccessToken);
     QNetworkAccessManager *manager=new QNetworkAccessManager;
     connect(manager,&QNetworkAccessManager::finished,func);
     manager->get(parseRequest(
         "https://api.minecraftservices.com/minecraft/profile",header));
 }
+void AuthCore::parseSkin(){
+    QString path=QDir::toNativeSeparators(CfgPath+"skin/");
+    QDir().mkpath(path);
+    if(profile.authServer=="offline"){
+        QString skin=isAlexDefault(profile.uuid)?
+                    ":/Images/alex.png":
+                    ":/Images/steve.png";
+        QFile::copy(skin,QString("%1%2.png").arg(path,profile.uuid));
+    }else if(profile.authServer=="microsoft"){
+        (new DownloadCore(this))->downloadFile(
+                    profile.skinUrl,QString("%1%2.png").arg(path,profile.uuid),1);
+    }else{
+        QStringList tmp=profile.authServer.split(":");
+        if(tmp.size()==2){
+            if(tmp[0]=="authlib"){
+
+            }else if(tmp[0]=="universal"){
+
+            }else throwX("解析皮肤","获得了错误的AuthServer参数",0);
+        }else throwX("解析皮肤","获得了错误的AuthServer参数",0);
+    }
+}
+bool AuthCore::isAlexDefault(QString uuid){
+    uuid=uuid.replace("-","");
+    int hash=0,strlen=uuid.length(),i;
+    QChar character;
+    for(i=0;i<strlen;i++){
+        character=uuid.at(i);
+        hash=(31*hash)+(character.toLatin1());
+    }
+    return (hash & 1) == 1;
+}
+QString AuthCore::getOfflinePlayerUUID(QString username){
+    username.insert(0,"OfflinePlayer:");
+    QByteArray md5;
+    md5=QCryptographicHash::hash(username.toUtf8(),QCryptographicHash::Md5);
+    md5[6]=md5[6]&0x0f;
+    md5[6]=md5[6]|0x30;
+    md5[8]=md5[8]&0x3f;
+    md5[8]=md5[8]|0x80;
+    return md5.toHex();
+}
 QNetworkRequest AuthCore::parseRequest(QString url,QMap<QString,QString> header){
     QNetworkRequest request(url);
-    for(QString key:header.keys())
+//    QMapIterator<QString,QString> iterator(header);
+//    for(;iterator.hasNext();)
+//        request.setRawHeader(iterator.key().toUtf8(),
+//                             iterator.value().toUtf8());
+    for(const QString &key:header.keys())
         request.setRawHeader(key.toUtf8(),header.value(key).toUtf8());
     return request;
 }

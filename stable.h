@@ -29,24 +29,27 @@
 #include <QFile>
 #include <QUrl>
 
-#define AutomaticFileManagerCfgName "automaticFileManager.ini"
+#define RootCfgName "RootCfg.ini"
 #ifdef Q_OS_WIN
     #include <windowsx.h>
     #include <windows.h>
     #define NATIVES "natives-windows"
     #define SHELL "cmd.exe"
     #define ESuffix ".bat"
-    #define AutomaticFileManagerCfgPath "C:/Xor 7 Studio/Xor 7 Atlantis/"
+    #define RootPath qgetenv("APPDATA")+"/Xor 7 Studio/Xor 7 Atlantis/"
+    #define USERNAME qgetenv("USERNAME");
 #endif
 #ifdef Q_OS_LINUX
     #define NATIVES "natives-linux"
     #define SHELL "bash"
     #define ESuffix ".sh"
-    #define AutomaticFileManagerCfgPath "/opt/Xor 7 Studio/Xor 7 Atlantis/"
+    #define RootPath "/opt/Xor 7 Studio/Xor 7 Atlantis/"
+    #define USERNAME qgetenv("USER");
 #endif
 #ifdef Q_OS_OSX
     #define NATIVES "natives-osx"
-    #define AutomaticFileManagerCfgPath "/opt/Xor 7 Studio/Xor 7 Atlantis/"
+    #define RootPath "/opt/Xor 7 Studio/Xor 7 Atlantis/"
+    #define USERNAME qgetenv("USER");
 #endif
 
 #define X7A_VER QString("Snapshot 0.1.0")
@@ -62,7 +65,6 @@
 #define ShowOnTop(a) Qt::WindowFlags flags=a->windowFlags();flags|=Qt::WindowStaysOnTopHint;a->setWindowFlags(flags);a->show();flags&=~Qt::WindowStaysOnTopHint;a->setWindowFlags(flags);a->showNormal()
 
 void throwX(QString at,QString msg,quint8 level);
-QString cfgPath=AutomaticFileManagerCfgPath"config/";
 
 #endif // STABLE_H
 

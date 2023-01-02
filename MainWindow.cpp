@@ -1,4 +1,5 @@
 ﻿#include "MainWindow.h"
+#include "ProfileManager.h"
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent){
     this->setWindowIcon(QIcon(":/Images/Icon/favicon.gif"));

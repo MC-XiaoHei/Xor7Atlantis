@@ -1,16 +1,30 @@
 #include "MainWidget.h"
+#include "ProfileManager.h"
 
 MainWidget::MainWidget(QWidget *parent)
     : QWidget{parent}
 {
+    b->setParent(parent);
+    b->move(200,200);
+    b->resize(100,100);
+    b->setStyleSheet("background-color:rgba(255,255,255,0);");
+    g->setParent(this);
+    g->setMaximumSize(100,100);
+    g->setPos(QPoint(200,200));
+    g->raise();
     //开启鼠标跟踪
     this->setMouseTracking(true);
     //控件初始化
+    Profile.read();
     m_verInfo->setParent(parent);
     m_closeBtnBg->setParent(parent);
     m_minisizeBtnBg->setParent(parent);
     m_closeBtn->setParent(parent);
     m_minisizeBtn->setParent(parent);
+    m_profileHeadLayer1->setParent(parent);
+    m_profileHeadLayer2->setParent(parent);
+    m_profileUsername->setParent(parent);
+    m_profileInfo->setParent(parent);
     //更改控件位置
     m_background->move(0,0);
     //设置控件
@@ -19,6 +33,7 @@ MainWidget::MainWidget(QWidget *parent)
     m_minisizeBtn->setIcon(QIcon(":/Images/Icon/Minisize.png"));
     m_minisizeBtn->setStyleSheet("background-color:rgba(255,255,255,0);"
                                  "border-radius:0px;");
+    m_profileInfo->setStyleSheet("color:rgb(56,56,56)");
     m_closeBtn->setStyleSheet(m_minisizeBtn->styleSheet());
     m_verInfo->setText(QString("Xor 7 Atlantis %1").arg(X7A_VER));
     //添加侧边栏
@@ -43,17 +58,18 @@ MainWidget::MainWidget(QWidget *parent)
     SideBarBtn *helpBtn=new SideBarBtn(
                 7,"帮助",":/Images/Icon/Help.png",this);
     m_sideBarBtns.insert("help",helpBtn);
-    for(auto btn:qAsConst(m_sideBarBtns)){
-        connect(btn,&SideBarBtn::clicked,this,[=](){
-            if(m_nowSideBarBtn==m_sideBarBtns.key(btn)) return;
-            m_sideBarBtns.value(m_nowSideBarBtn)->inactive();
-            m_nowSideBarBtn=m_sideBarBtns.key(btn);
-//                switchPage(m_nowSideBarBtn);
-            btn->active();
-        });
-    }
-    homeBtn->setAlpha(82);
-    emit homeBtn->clicked();
+//    for(auto btn:qAsConst(m_sideBarBtns)){
+//        connect(btn,&SideBarBtn::clicked,this,[=](){
+//            if(m_nowSideBarBtn==m_sideBarBtns.key(btn)) return;
+//            m_sideBarBtns.value(m_nowSideBarBtn)->inactive();
+//            m_nowSideBarBtn=m_sideBarBtns.key(btn);
+////                switchPage(m_nowSideBarBtn);
+//            btn->active();
+//        });
+//    }
+//    homeBtn->setSubAlpha(80);
+//    homeBtn->setAlpha(80);
+//    homeBtn->active();
     //链接事件和槽
     connect(m_closeBtn,&QPushButton::clicked,this,&MainWidget::closeWindow);
     connect(m_minisizeBtn,&QPushButton::clicked,this,&MainWidget::minimizeWindow);
@@ -62,6 +78,23 @@ MainWidget::MainWidget(QWidget *parent)
     startTimer(50);
 }
 void MainWidget::onTimerEvent(){
+    if(b->underMouse()) g->setState(BtnBgState::WeakActive);
+    else g->setState(BtnBgState::Inactive);
+    //设置控件
+    m_profileUsername->setText(Profile.getNow()->username);
+    QString authInfo,authServer=Profile.getNow()->authServer;
+    if(authServer=="offline") authInfo="离线账户";
+    else if(authServer=="microsoft") authInfo="微软账户";
+    else{
+        authServer=authServer.split(":")[0];
+        if(authServer=="authlib") authInfo="外置登录账户";
+        else if(authServer=="universal") authInfo="统一通行证账户";
+    }
+    m_profileInfo->setText(Profile.getNow()->extraInfo+" "+authInfo);
+    QImage skin=SKIN(Profile.getNow()->uuid);
+    m_profileHeadLayer1->setPixmap(QPixmap::fromImage(skin.copy(8,8,8,8).scaled(ZOOM(55),ZOOM(55))));
+    m_profileHeadLayer2->setPixmap(QPixmap::fromImage(skin.copy(40,8,8,8).scaled(ZOOM(65),ZOOM(64))));
+    //处理最小化以及关闭按钮的背景
     if(m_closeBtn->underMouse())
         closeBtnAlpha=Min(255,closeBtnAlpha+100);
     else
@@ -91,7 +124,23 @@ void MainWidget::resizeEvent(QResizeEvent* event){
     ON_ZOOM_UPDATE{//执行仅需要在缩放时
         //更改控件位置
         m_mask->move(ZOOM(1),ZOOM(1));
+        m_profileHeadLayer2->move(ZOOM(19),
+                                  ZOOM(16));
+        m_profileHeadLayer1->move(m_profileHeadLayer2->x()+ZOOM(5.5),
+                                  m_profileHeadLayer2->y()+ZOOM(4.5));
+        m_profileUsername->move(ZOOM(96),
+                                ZOOM(27));
+        m_profileInfo->move(ZOOM(96),
+                            ZOOM(51));
         //更改控件大小
+        m_profileHeadLayer1->resize(ZOOM(55),
+                                    ZOOM(55));
+        m_profileHeadLayer2->resize(ZOOM(64),
+                                    ZOOM(64));
+        m_profileUsername->resize(ZOOM(149),
+                                  ZOOM(24));
+        m_profileInfo->resize(ZOOM(149),
+                              ZOOM(15));
         m_verInfo->resize(ZOOM(271),
                           ZOOM(18));
         m_minisizeBtn->resize(ZOOM(46),
@@ -108,8 +157,12 @@ void MainWidget::resizeEvent(QResizeEvent* event){
             "border-radius:%1px;")
             .arg(ZOOM(7)));
         QFont font;
+        font.setStyleStrategy(QFont::PreferAntialias);
+        font.setPixelSize(ZOOM(16));
+        m_profileUsername->setFont(font);
         font.setPixelSize(ZOOM(12));
         m_verInfo->setFont(font);
+        m_profileInfo->setFont(font);
         m_verInfo->setStyleSheet("color:rgb(128,128,128)");
         //清空之前的页面
         m_pages.clear();
@@ -155,6 +208,10 @@ void MainWidget::resizeEvent(QResizeEvent* event){
     blureffect->setBlurRadius(ZOOM(12));
     m_background->setGraphicsEffect(blureffect);
     //设置层级关系
+    m_profileHeadLayer1->raise();
+    m_profileHeadLayer2->raise();
+    m_profileInfo->raise();
+    m_profileUsername->raise();
     m_minisizeBtn->raise();
     m_closeBtn->raise();
     m_verInfo->raise();

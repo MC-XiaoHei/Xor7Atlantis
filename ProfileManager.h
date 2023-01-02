@@ -2,6 +2,7 @@
 #define PROFILEMANAGER_H
 
 #include "stable.h"
+#include "UpdateManager.h"
 #include "AuthCore.h"
 
 class ProfileManager : public QObject
@@ -10,18 +11,22 @@ class ProfileManager : public QObject
 public:
     explicit ProfileManager(QObject *parent = nullptr);
     void read();
-    QList<AuthProfile> getAll();
-    AuthProfile get(quint16 n);
-    AuthProfile now(quint16 n);
-    void push_front(AuthProfile profile);
-    void swap(quint16 a,quint16 b);
-    void remove(quint16 n);
+    QList<AuthProfile*> getAll();
+    AuthProfile* get(quint64 n);
+    void choose(quint64 n);
+    void push_front(AuthProfile* profile);
+    void swap(quint64 a,quint64 b);
+    void extracted(QJsonArray &array);
+    void save();
+    void remove(quint64 n);
+    AuthProfile* getNow();
 signals:
 
 private:
-    AuthProfile nowProfile;
-    QList<AuthProfile> profiles;
+    quint64 now=0;
+    QList<AuthProfile*> profiles;
 };
-Q_GLOBAL_STATIC(ProfileManager,Profile)
+static ProfileManager Profile;
+#define SKIN(uuid) QImage(QDir::toNativeSeparators(QString("%1/skin/%2.png").arg(CfgPath,uuid)))
 
 #endif // PROFILEMANAGER_H

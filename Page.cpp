@@ -6,7 +6,7 @@ Page::Page(QWidget *parent)
 
 }
 void Page::flush(){
-    this->setWidget(body);
+    this->setWidget(m_body);
     this->setWidgetResizable(true);
 }
 void Page::flashHide(){

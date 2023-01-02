@@ -2,9 +2,8 @@
 #include "LaunchCore.h"
 #include "AuthCore.h"
 #include "MainWindow.h"
-#include "AutomaticInstanceManager.h"
-#include <QMessageBox>
-
+#include "ProfileManager.h"
+#include "UpdateManager.h"
 void startGame(){
     VerInfo ver;
     LaunchInfo launch;
@@ -44,7 +43,7 @@ int main(int argc, char *argv[]){
                 true,
                 SingleApplication::User|
                 SingleApplication::ExcludeAppVersion);
-    QString path=AutomaticInstanceManagerInstance->read()+"Xor 7 Atlantis";
+    QString path=UpdateManagerInstance->read()+"Xor 7 Atlantis";
     #ifdef Q_OS_WIN
         path+=".exe";
     #endif
@@ -68,8 +67,7 @@ int main(int argc, char *argv[]){
 //    });
     parser.process(app);
     QStringList positionList = parser.positionalArguments();
-    qDebug() << positionList;
-
+    qDebug()<<positionList;
     if(app.isSecondary()){
         app.sendMessage(app.applicationDirPath().toUtf8());
         app.exit(0);
@@ -88,12 +86,21 @@ int main(int argc, char *argv[]){
     QObject::connect(&app,&SingleApplication::instanceStarted,&w,[&](){ShowOnTop((&w));});
     QObject::connect(&app,&SingleApplication::receivedMessage,&w,&MainWindow::onReceiveMsg);
     w.show();
-    w.activateWindow();
+    ShowOnTop((&w));
     LaunchCore::getJava();
 //    AuthCore * ac=new AuthCore;
 //    ac->connect(ac,&AuthCore::authProgressUpdate,ac,[=](bool state,QString msg){
 //        qDebug()<<msg;
 //    });
+//    ac->connect(ac,&AuthCore::finished,ac,[=](){
+//        Profile->push_front(ac->profile);
+//        Profile->save();
+//    });
+//    ac->offline_login("bbb");
+//    ac->offline_login("aaa");
+//    ac->offline_login("aaa");
+//    ac->offline_login("ada");
+//    ac->offline_login("MC_XiaoHei");
 //    ac->ms_login();
 //    Wait(1000);
 //    for(JavaInfo j:LaunchCore::javaInfoVec){
