@@ -2,33 +2,51 @@
 
 ButtonBg::ButtonBg(QWidget *parent)
  : QPushButton{parent}{
-    maxGeo=this->geometry();
-    minGeo=this->geometry();
+    maxGeo=geometry();
+    minGeo=geometry();
     setAlpha(minAlpha);
     setGeometry(minGeo);
     startTimer(50);
+    lastGeo=minGeo;
+    lastAlpha=minAlpha;
 }
 void ButtonBg::timerEvent(QTimerEvent *event){
-    int deltaAlpha,dx,dy,dw,dh;
     switch (goalState) {
     case BtnBgState::Inactive:{
-        deltaAlpha=minAlpha-alpha;
-        dx=geometry().x()-minGeo.x();
+        setAlpha(Max(alpha-50,minAlpha));
+        move(Min(x()+ZOOM(8),minGeo.x()),
+             Min(y()+ZOOM(1),minGeo.y()));
+        resize(Max(width()-ZOOM(16),minGeo.width()),
+               Max(height()-ZOOM(2),minGeo.height()));
+        if(alpha==minAlpha && geometry()==minGeo)
+            goalState=BtnBgState::None;
         break;
     }
     case BtnBgState::WeakActive:{
-        deltaAlpha=midAlpha-alpha;
+        if(nowState==BtnBgState::Inactive)
+            setAlpha(Min(alpha+50,midAlpha));
+        else
+            setAlpha(Max(alpha-50,midAlpha));
+        move(Max(x()-ZOOM(8),maxGeo.x()),
+             Max(y()-ZOOM(1),maxGeo.y()));
+        resize(Min(width()+ZOOM(16),maxGeo.width()),
+               Min(height()+ZOOM(2),maxGeo.height()));
+        if(alpha==midAlpha && geometry()==maxGeo)
+            goalState=BtnBgState::None;
         break;
     }
     case BtnBgState::StrongActive:{
-        deltaAlpha=maxAlpha-alpha;
-
+        setAlpha(Min(alpha+50,maxAlpha));
+        move(Min(x()+ZOOM(8),minGeo.x()),
+             Min(y()+ZOOM(1),minGeo.y()));
+        resize(Max(width()-ZOOM(16),minGeo.width()),
+               Max(height()-ZOOM(2),minGeo.height()));
+        if(alpha==maxAlpha && geometry()==minGeo)
+            goalState=BtnBgState::None;
         break;
     }
-    default:
-        break;
+    default:return;
     }
-    setAlpha(alpha+deltaAlpha/5);
 }
 void ButtonBg::setMaximumSize(QSize size){
     maxGeo.setSize(size);
@@ -41,7 +59,6 @@ void ButtonBg::setPos(QPoint pos){
     maxGeo.moveTo(pos);
     minGeo.moveTo(maxGeo.topLeft().x()+ZOOM(10),
                   maxGeo.topLeft().y()+ZOOM(1));
-    qDebug()<<maxGeo<<minGeo;
 }
 void ButtonBg::setAlpha(int nAlpha){
     alpha=nAlpha;
@@ -50,51 +67,13 @@ void ButtonBg::setAlpha(int nAlpha){
         .arg(color,QString::number(nAlpha),qss));
 }
 void ButtonBg::setState(BtnBgState state){
-    if(state==goalState) return;
     goalState=state;
-    switch(state){
-    case BtnBgState::Inactive:{
-        Point;
-        ALPHA_ANIMATION(minAlpha,250);
-        GEOMETRY_ANIMATION(minGeo,250);
-        QTimer::singleShot(240, this, [=]() mutable{
-            Point;
-            if(geoAnimation->Running){
-                hide();
-                state=BtnBgState::None;
-            }
-        });
-        break;
-    }
-    case BtnBgState::WeakActive:{
-        Point;
-        ALPHA_ANIMATION(midAlpha,250);
-        GEOMETRY_ANIMATION(maxGeo,250);
-        show();
-        QTimer::singleShot(240, this, [=]() mutable{
-            Point;
-            if(geoAnimation->Running)
-                state=BtnBgState::None;
-        });
-        break;
-    }
-    case BtnBgState::StrongActive:{
-        ALPHA_ANIMATION(maxAlpha,125);
-        GEOMETRY_ANIMATION(minGeo,125);
-        QTimer::singleShot(240, this, [=]() mutable{
-            if(geoAnimation->Running)
-                state=BtnBgState::None;
-        });
-        break;
-    }
-    case BtnBgState::None:break;
-    }
 }
 void ButtonBg::setQSS(QString nQSS){
     qss=nQSS;
-    setAlpha(alpha());
+    setAlpha(alpha);
 }
 void ButtonBg::setColor(QString nColor){
     color=nColor;
-    setAlpha(alpha());
+    setAlpha(alpha);
 }

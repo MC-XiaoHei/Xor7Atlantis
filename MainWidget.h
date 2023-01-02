@@ -2,7 +2,7 @@
 #define MAINWIDGET_H
 
 #include "SideBarBtn.h"
-#include "ButtonBg.h"
+#include "SelfLockBtnBg.h"
 #include "stable.h"
 #include "Zoomer.h"
 #include "Page.h"
@@ -23,7 +23,7 @@ private:
     quint8 closeBtnAlpha=0,
            minisizeBtnAlpha=0;
     QPushButton *b=new QPushButton;
-    ButtonBg *g=new ButtonBg;
+    SelfLockBtnBg *g=new SelfLockBtnBg(b);
     QImage m_bg;
     QLabel *m_profileHeadLayer1=new QLabel,
            *m_profileHeadLayer2=new QLabel,

@@ -25,9 +25,9 @@ public:
 protected:
     void timerEvent(QTimerEvent *event);
 private:
-    int alpha,maxAlpha=160,midAlpha=80,minAlpha=0;
+    int alpha,maxAlpha=160,midAlpha=80,minAlpha=0,lastAlpha;
     QString color="255,255,255",qss="border-radius:4px";
-    QRect minGeo,maxGeo;
+    QRect minGeo,maxGeo,lastGeo;
     BtnBgState nowState=BtnBgState::Inactive,
                goalState=BtnBgState::None;
 };

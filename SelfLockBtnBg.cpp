@@ -1,24 +1,27 @@
 #include "SelfLockBtnBg.h"
 
-SelfLockBtnBg::SelfLockBtnBg(QWidget *parent)
+SelfLockBtnBg::SelfLockBtnBg(QPushButton *btn,QWidget *parent)
  : ButtonBg{parent}{
     refresh();
-    connect(this,&QPushButton::clicked,this,&SelfLockBtnBg::onClick);
+    this->btn=btn;
+    connect(btn,&QPushButton::clicked,this,[=](){
+        if(!active){
+            active=true;
+            setState(BtnBgState::WeakActive);
+        }
+        else active=false;
+    });
+    startTimer(50);
 }
 void SelfLockBtnBg::refresh(){
     setQSS(QString(
         "border-radius:%1px;")
         .arg(ZOOM(m_radius)));
 }
-void SelfLockBtnBg::focusInEvent(QFocusEvent *event){
-    setState(BtnBgState::WeakActive);
-}
-void SelfLockBtnBg::focusOutEvent(QFocusEvent *event){
-    if(!active) setState(BtnBgState::Inactive);
-}
-void SelfLockBtnBg::onClick(){
-    Point;
-    active=!active;
-}
-void SelfLockBtnBg::onRelease(){
+void SelfLockBtnBg::timerEvent(QTimerEvent *event){
+    ButtonBg::timerEvent(event);
+    if(btn->underMouse() || active)
+        setState(BtnBgState::WeakActive);
+    else
+        setState(BtnBgState::Inactive);
 }

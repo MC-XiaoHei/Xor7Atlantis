@@ -7,17 +7,15 @@ class SelfLockBtnBg : public ButtonBg
 {
     Q_OBJECT
 public:
-    SelfLockBtnBg(QWidget *parent = nullptr);
+    SelfLockBtnBg(QPushButton* btn,QWidget *parent = nullptr);
     void refresh();
-    void onClick();
-    void onRelease();
     void setBorderRadius(quint64 radius);
+protected:
+    void timerEvent(QTimerEvent *event);
 private:
     quint64 m_radius=4;
     bool active=false;
-protected:
-    void focusInEvent(QFocusEvent *event);
-    void focusOutEvent(QFocusEvent *event);
+    QPushButton *btn;
 };
 
 #endif // SELFLOCKBTNBG_H

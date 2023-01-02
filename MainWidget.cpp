@@ -5,12 +5,12 @@ MainWidget::MainWidget(QWidget *parent)
     : QWidget{parent}
 {
     b->setParent(parent);
-    b->move(200,200);
+    b->move(300,200);
     b->resize(100,100);
     b->setStyleSheet("background-color:rgba(255,255,255,0);");
     g->setParent(this);
     g->setMaximumSize(100,100);
-    g->setPos(QPoint(200,200));
+    g->setPos(QPoint(300,200));
     g->raise();
     //开启鼠标跟踪
     this->setMouseTracking(true);
@@ -58,18 +58,6 @@ MainWidget::MainWidget(QWidget *parent)
     SideBarBtn *helpBtn=new SideBarBtn(
                 7,"帮助",":/Images/Icon/Help.png",this);
     m_sideBarBtns.insert("help",helpBtn);
-//    for(auto btn:qAsConst(m_sideBarBtns)){
-//        connect(btn,&SideBarBtn::clicked,this,[=](){
-//            if(m_nowSideBarBtn==m_sideBarBtns.key(btn)) return;
-//            m_sideBarBtns.value(m_nowSideBarBtn)->inactive();
-//            m_nowSideBarBtn=m_sideBarBtns.key(btn);
-////                switchPage(m_nowSideBarBtn);
-//            btn->active();
-//        });
-//    }
-//    homeBtn->setSubAlpha(80);
-//    homeBtn->setAlpha(80);
-//    homeBtn->active();
     //链接事件和槽
     connect(m_closeBtn,&QPushButton::clicked,this,&MainWidget::closeWindow);
     connect(m_minisizeBtn,&QPushButton::clicked,this,&MainWidget::minimizeWindow);
@@ -78,8 +66,6 @@ MainWidget::MainWidget(QWidget *parent)
     startTimer(50);
 }
 void MainWidget::onTimerEvent(){
-    if(b->underMouse()) g->setState(BtnBgState::WeakActive);
-    else g->setState(BtnBgState::Inactive);
     //设置控件
     m_profileUsername->setText(Profile.getNow()->username);
     QString authInfo,authServer=Profile.getNow()->authServer;
