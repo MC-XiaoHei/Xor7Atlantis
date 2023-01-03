@@ -4,14 +4,6 @@
 MainWidget::MainWidget(QWidget *parent)
     : QWidget{parent}
 {
-    b->setParent(parent);
-    b->move(300,200);
-    b->resize(100,100);
-    b->setStyleSheet("background-color:rgba(255,255,255,0);");
-    g->setParent(this);
-    g->setMaximumSize(100,100);
-    g->setPos(QPoint(300,200));
-    g->raise();
     //开启鼠标跟踪
     this->setMouseTracking(true);
     //控件初始化
@@ -58,6 +50,15 @@ MainWidget::MainWidget(QWidget *parent)
     SideBarBtn *helpBtn=new SideBarBtn(
                 7,"帮助",":/Images/Icon/Help.png",this);
     m_sideBarBtns.insert("help",helpBtn);
+    for(const auto &key:m_sideBarBtns.keys()){
+        SideBarBtn *btn=m_sideBarBtns.value(key);
+        connect(btn,&SideBarBtn::clicked,this,[=](){
+            m_sideBarBtns.value(m_nowSideBarBtn)->release();
+            m_nowSideBarBtn=key;
+            btn->click();
+        });
+    }
+    homeBtn->setDefault();
     //链接事件和槽
     connect(m_closeBtn,&QPushButton::clicked,this,&MainWidget::closeWindow);
     connect(m_minisizeBtn,&QPushButton::clicked,this,&MainWidget::minimizeWindow);

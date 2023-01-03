@@ -22,8 +22,6 @@ private:
     bool flash=false;
     quint8 closeBtnAlpha=0,
            minisizeBtnAlpha=0;
-    QPushButton *b=new QPushButton;
-    SelfLockBtnBg *g=new SelfLockBtnBg(b);
     QImage m_bg;
     QLabel *m_profileHeadLayer1=new QLabel,
            *m_profileHeadLayer2=new QLabel,

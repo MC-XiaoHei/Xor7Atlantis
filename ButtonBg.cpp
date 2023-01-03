@@ -6,17 +6,17 @@ ButtonBg::ButtonBg(QWidget *parent)
     minGeo=geometry();
     setAlpha(minAlpha);
     setGeometry(minGeo);
-    startTimer(50);
+    startTimer(25);
     lastGeo=minGeo;
     lastAlpha=minAlpha;
 }
 void ButtonBg::timerEvent(QTimerEvent *event){
     switch (goalState) {
     case BtnBgState::Inactive:{
-        setAlpha(Max(alpha-50,minAlpha));
-        move(Min(x()+ZOOM(8),minGeo.x()),
+        setAlpha(Max(alpha-25,minAlpha));
+        move(Min(x()+ZOOM(2),minGeo.x()),
              Min(y()+ZOOM(1),minGeo.y()));
-        resize(Max(width()-ZOOM(16),minGeo.width()),
+        resize(Max(width()-ZOOM(4),minGeo.width()),
                Max(height()-ZOOM(2),minGeo.height()));
         if(alpha==minAlpha && geometry()==minGeo)
             goalState=BtnBgState::None;
@@ -24,22 +24,22 @@ void ButtonBg::timerEvent(QTimerEvent *event){
     }
     case BtnBgState::WeakActive:{
         if(nowState==BtnBgState::Inactive)
-            setAlpha(Min(alpha+50,midAlpha));
+            setAlpha(Min(alpha+25,midAlpha));
         else
-            setAlpha(Max(alpha-50,midAlpha));
-        move(Max(x()-ZOOM(8),maxGeo.x()),
+            setAlpha(Max(alpha-25,midAlpha));
+        move(Max(x()-ZOOM(2),maxGeo.x()),
              Max(y()-ZOOM(1),maxGeo.y()));
-        resize(Min(width()+ZOOM(16),maxGeo.width()),
+        resize(Min(width()+ZOOM(4),maxGeo.width()),
                Min(height()+ZOOM(2),maxGeo.height()));
         if(alpha==midAlpha && geometry()==maxGeo)
             goalState=BtnBgState::None;
         break;
     }
     case BtnBgState::StrongActive:{
-        setAlpha(Min(alpha+50,maxAlpha));
-        move(Min(x()+ZOOM(8),minGeo.x()),
+        setAlpha(Min(alpha+25,maxAlpha));
+        move(Min(x()+ZOOM(2),minGeo.x()),
              Min(y()+ZOOM(1),minGeo.y()));
-        resize(Max(width()-ZOOM(16),minGeo.width()),
+        resize(Max(width()-ZOOM(4),minGeo.width()),
                Max(height()-ZOOM(2),minGeo.height()));
         if(alpha==maxAlpha && geometry()==minGeo)
             goalState=BtnBgState::None;

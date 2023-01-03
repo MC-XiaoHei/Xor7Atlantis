@@ -9,6 +9,9 @@ class SelfLockBtnBg : public ButtonBg
 public:
     SelfLockBtnBg(QPushButton* btn,QWidget *parent = nullptr);
     void refresh();
+    void release(){active=false;}
+    void click(){active=true;}
+    bool isActive(){return active;}
     void setBorderRadius(quint64 radius);
 protected:
     void timerEvent(QTimerEvent *event);

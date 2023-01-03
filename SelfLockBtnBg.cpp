@@ -4,14 +4,7 @@ SelfLockBtnBg::SelfLockBtnBg(QPushButton *btn,QWidget *parent)
  : ButtonBg{parent}{
     refresh();
     this->btn=btn;
-    connect(btn,&QPushButton::clicked,this,[=](){
-        if(!active){
-            active=true;
-            setState(BtnBgState::WeakActive);
-        }
-        else active=false;
-    });
-    startTimer(50);
+    startTimer(25);
 }
 void SelfLockBtnBg::refresh(){
     setQSS(QString(

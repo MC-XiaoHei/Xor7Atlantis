@@ -3,7 +3,6 @@
 SideBarBtn::SideBarBtn(quint8 index,QString text,QString iconPath,QWidget *parent)
     : QObject{parent}
 {
-//    setObj(btn);
     this->index=index;
     this->text=text;
     this->iconPath=iconPath;
@@ -20,20 +19,24 @@ SideBarBtn::SideBarBtn(quint8 index,QString text,QString iconPath,QWidget *paren
         "border-bottom-right-radius:%1px;")
         .arg(QString::number(ZOOM(3))));
     connect(btn,&QPushButton::clicked,this,&SideBarBtn::clicked);
-//    connect(this,&AlphaSupposedObject::alphaChanged,this,[=](){
-//        bg->setStyleSheet(QString(
-//            "border-radius:%1px;"
-//            "background-color:rgba(255,255,255,%2)")
-//            .arg(QString::number(ZOOM(4)),QString::number(getAlpha())));
-//    });
-//    connect(this,&AlphaSupposedObject::subAlphaChanged,this,[=](){
-//        cursor->setStyleSheet(QString(
-//            "background-color:rgba(0,95,184,%2);"
-//            "border-top-right-radius:%1px;"
-//            "border-bottom-right-radius:%1px;")
-//            .arg(QString::number(ZOOM(3)),QString::number(Max(0,getSubAlpha()*6-246))));
-//    });
     refresh();
+    onTimerEvent();
+    startTimer(50);
+}
+void SideBarBtn::setDefault(){
+    cursorAlpha=255;
+    bg->setAlpha(80);
+    this->click();
+    onTimerEvent();
+}
+void SideBarBtn::onTimerEvent(){
+    if(bg->isActive()) cursorAlpha=Min(255,cursorAlpha+150);
+    else cursorAlpha=Max(0,cursorAlpha-150);
+    cursor->setStyleSheet(QString(
+                "background-color:rgba(0,95,184,%2);"
+                "border-top-right-radius:%1px;"
+                "border-bottom-right-radius:%1px;")
+                .arg(QString::number(ZOOM(3)),QString::number(cursorAlpha)));
 }
 void SideBarBtn::refresh(){
     QFont font;
@@ -42,10 +45,10 @@ void SideBarBtn::refresh(){
                 ZOOM(41));
     btn->move(ZOOM(1),
               ZOOM(51+index*41));
-    bg->resize(ZOOM(213),
-               ZOOM(34));
-    bg->move(btn->x()+ZOOM(18),
-             btn->y()+ZOOM(2));
+    bg->setMaximumSize(ZOOM(213),
+                       ZOOM(34));
+    bg->setPos(QPoint(btn->x()+ZOOM(18),
+                      btn->y()+ZOOM(2)));
     QPixmap icon=QPixmap(iconPath);
     l_icon->setPixmap(icon.scaled(ZOOM(28),
                                   ZOOM(28),
