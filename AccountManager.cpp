@@ -1,14 +1,14 @@
-#include "ProfileManager.h"
+#include "AccountManager.h"
 
-ProfileManager::ProfileManager(QObject *parent)
+AccountManager::AccountManager(QObject *parent)
     : QObject{parent}
 {
 }
-void ProfileManager::read(){
+void AccountManager::read(){
     QDir().mkpath(CfgPath);
     QFile file(CfgPath+"profiles.json");
     if(!file.open(QIODevice::ReadWrite | QIODevice::Text)){
-        throwX("读取profile.json","读取账户存储文件时发生错误",0);
+        throwX("读取profiles.json","读取账户存储文件时发生错误",0);
         return;
     }
     QByteArray data=file.readAll();
@@ -33,44 +33,21 @@ void ProfileManager::read(){
             profile->authServer=obj["authServer"].toString();
             profile->mcAccessToken=obj["mcAccessToken"].toString();
             profile->refreshToken=obj["refreshToken"].toString();
-            profiles.push_front(profile);
+            minecraftProfiles.push_front(profile);
         }
     }
     else{
-        AuthProfile *profile=new AuthProfile;
-        profile->username=USERNAME;
-        profile->uuid=AuthCore::getOfflinePlayerUUID(profile->username);
-        profile->email=
-        profile->msCode=
-        profile->skinUrl=
-        profile->userHash=
-        profile->xblToken=
-        profile->xstsToken=
-        profile->accessToken=
-        profile->mcAccessToken=
-        profile->refreshToken="";
-        profile->authServer="offline";
-        profiles.push_front(profile);
-        choose(0);
+        AuthCore *ac=new AuthCore(this);
+        ac->offline_login(USERNAME);
+        minecraftProfiles.push_front(&ac->profile);
+        chooseMinecraftProfile(0);
     }
     save();
 }
-AuthProfile* ProfileManager::getNow(){
-    return get(now);
-}
-void ProfileManager::choose(quint64 n){
-    now=n;
-}
-QList<AuthProfile *> ProfileManager::getAll(){
-    return profiles;
-}
-AuthProfile* ProfileManager::get(quint64 n){
-    return profiles[n];
-}
-void ProfileManager::save(){
+void AccountManager::save(){
     QJsonDocument doc;
     QJsonArray array;
-    for(const auto &profile:profiles){
+    for(const auto &profile:minecraftProfiles){
         QJsonObject obj;
         obj["uuid"]=profile->uuid;
         obj["email"]=profile->email;
@@ -90,19 +67,28 @@ void ProfileManager::save(){
     QDir().mkpath(CfgPath);
     QFile file(CfgPath+"profiles.json");
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text)){
-        throwX("保存profile.json","打开账户存储文件时发生错误",0);
+        throwX("保存profiles.json","打开账户存储文件时发生错误",0);
         return;
     }
     QTextStream stream(&file);
     stream << doc.toJson();
     file.close();
 }
-void ProfileManager::push_front(AuthProfile* profile){
-    profiles.push_front(profile);
+AuthProfile* AccountManager::getNowMinecraftProfile(){
+    return minecraftProfiles.at(mp_now);
+}
+void AccountManager::chooseMinecraftProfile(quint64 n){
+    mp_now=n;
+}
+QList<AuthProfile *> AccountManager::getMinecraftProfiles(){
+    return minecraftProfiles;
+}
+void AccountManager::pushMinecraftProfile(AuthProfile* profile){
+    minecraftProfiles.push_front(profile);
     quint8 cnt=0;
     QList<quint64> needRemoves;
-    for(quint64 i=0;i<profiles.size();i++){
-        AuthProfile* p=profiles.at(i);
+    for(quint64 i=0;i<minecraftProfiles.size();i++){
+        AuthProfile* p=minecraftProfiles.at(i);
         if(p->uuid==profile->uuid &&
                 p->authServer==profile->authServer){
             if(cnt>=1) needRemoves.append(i);
@@ -110,12 +96,36 @@ void ProfileManager::push_front(AuthProfile* profile){
         }
     }
     for(auto index:qAsConst(needRemoves))
-        profiles.removeAt(index);
-    now=0;
+        minecraftProfiles.removeAt(index);
+    mp_now=0;
 }
-void ProfileManager::swap(quint64 a, quint64 b){
-    profiles.swapItemsAt(a,b);
+qsizetype AccountManager::minecraftProfileSize(){
+    return minecraftProfiles.size();
 }
-void ProfileManager::remove(quint64 n){
-    profiles.remove(n);
+OpenFrpProfile* AccountManager::getNowOpenFrpProfile(){
+    return openFrpProfiles.at(ofp_now);
+}
+void AccountManager::chooseOpenFrpProfile(quint64 n){
+    ofp_now=n;
+}
+QList<OpenFrpProfile *> AccountManager::getOpenFrpProfiles(){
+    return openFrpProfiles;
+}
+void AccountManager::pushOpenFrpProfile(OpenFrpProfile* profile){
+    openFrpProfiles.push_front(profile);
+    quint8 cnt=0;
+    QList<quint64> needRemoves;
+    for(quint64 i=0;i<openFrpProfiles.size();i++){
+        OpenFrpProfile* p=openFrpProfiles.at(i);
+        if(p->id==profile->id){
+            if(cnt>=1) needRemoves.append(i);
+            cnt++;
+        }
+    }
+    for(auto index:qAsConst(needRemoves))
+        openFrpProfiles.removeAt(index);
+    ofp_now=0;
+}
+qsizetype AccountManager::openFrpProfileSize(){
+    return openFrpProfiles.size();
 }

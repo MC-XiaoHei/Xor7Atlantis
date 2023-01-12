@@ -1,10 +1,11 @@
 ﻿#include "MainWindow.h"
-#include "ProfileManager.h"
+#include "AccountManager.h"
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent){
     this->setWindowIcon(QIcon(":/Images/Icon/favicon.gif"));
     this->setMinimumSize(MAIN_SIZE_X,MAIN_SIZE_Y);
     this->setMouseTracking(true);
+    this->setAcceptDrops(true);
     this->setWindowTitle("Xor 7 Atlantis");
     this->setWindowFlags(Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_TranslucentBackground);

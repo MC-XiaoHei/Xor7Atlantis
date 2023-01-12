@@ -36,6 +36,27 @@ void AuthCore::ms_login(){
             .value("xui").toArray()
             .begin()->toObject().value("uhs").toString();
     emit authProgressUpdate(true,"微软登录:成功获取到Xbox Live验证Token","正在获取XSTS验证Token...");
+    ms_loginEvent();
+    });});});
+}
+void AuthCore::ms_refresh(){
+    QMap<QString,QString> header;
+    header["Content-Type"]="application/x-www-form-urlencoded";
+    QString url="https://login.microsoftonline.com/consumers/oauth2/v2.0/token";
+    AuthCore::post(url,header,QString("client_id=153b7e99-4545-4c18-b1c1-619121bb36b6&"
+                                      "refresh_token=%1&"
+                                      "grant_type=refresh_token&"
+                                      "scope=XboxLive.signin%20XboxLive.offline_access")
+                   .arg(profile.refreshToken).toUtf8(),[=](QNetworkReply* reply){
+        QJsonDocument *doc=new QJsonDocument(QJsonDocument::fromJson(reply->readAll()));
+        profile.accessToken=doc->object().value("accessToken").toString();
+        profile.refreshToken=doc->object().value("refreshToken").toString();
+        emit authProgressUpdate(true,"微软登录:成功刷新Xbox Live验证Token","正在获取XSTS验证Token...");
+        ms_loginEvent();
+    });
+
+}
+void AuthCore::ms_loginEvent(){
     ms_getXSTSToken([=](QNetworkReply* reply){
     QJsonDocument *doc=new QJsonDocument(QJsonDocument::fromJson(reply->readAll()));
     profile.xstsToken=doc->object().value("Token").toString();
@@ -77,7 +98,7 @@ void AuthCore::ms_login(){
         emit authProgressUpdate(true,"微软登录:成功获取到Minecraft Profile","登录成功");
         emit finished();
     }
-});});});});});});}
+});});});}
 void AuthCore::ms_getCode(std::function<void(bool,QString)> func){
     QTcpServer *server=new QTcpServer();
     server->listen(QHostAddress::LocalHost);
@@ -112,7 +133,8 @@ void AuthCore::ms_getMSToken(std::function<void(QNetworkReply*)> func){
                                       "code=%1&"
                                       "grant_type=authorization_code&"
                                       "redirect_uri=%2&"
-                                      "scope=XboxLive.signin%20XboxLive.offline_access").arg(profile.msCode).arg(this->redirectUri).toUtf8(),func);
+                                      "scope=XboxLive.signin%20XboxLive.offline_access")
+                   .arg(profile.msCode,this->redirectUri).toUtf8(),func);
 }
 void AuthCore::ms_getXBLToken(std::function<void(QNetworkReply*)> func){
     QMap<QString,QString> header;
@@ -174,10 +196,10 @@ void AuthCore::parseSkin(){
         QString skin=isAlexDefault(profile.uuid)?
                     ":/Images/alex.png":
                     ":/Images/steve.png";
-        QFile::copy(skin,QString("%1%2.png").arg(path,profile.uuid));
+        QFile::copy(skin,QString("%1%2-%3.png").arg(path,profile.authServer,profile.uuid));
     }else if(profile.authServer=="microsoft"){
         (new DownloadCore(this))->downloadFile(
-                    profile.skinUrl,QString("%1%2.png").arg(path,profile.uuid),1);
+                    profile.skinUrl,QString("%1%2-%3.png").arg(path,profile.authServer,profile.uuid),1);
     }else{
         QStringList tmp=profile.authServer.split(":");
         if(tmp.size()==2){

@@ -2,20 +2,18 @@
 #define PAGE_H
 
 #include "stable.h"
+#include "Zoomer.h"
 
-class Page : public QScrollArea
+class Page : public QWidget
 {
     Q_OBJECT
 public:
     explicit Page(QWidget *parent = nullptr);
-    void flush();
-    void flashHide();
-    void flashShow();
-    QWidget *body(){return m_body;}
+    void refresh();
+    void hide();
+    void show();
 signals:
 
-private:
-    QWidget *m_body=new QWidget(this);
 };
 
 #endif // PAGE_H

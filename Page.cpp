@@ -1,17 +1,19 @@
 #include "Page.h"
 
 Page::Page(QWidget *parent)
-    : QScrollArea{parent}
+    : QWidget{parent}
 {
-
+    hide();
+    refresh();
 }
-void Page::flush(){
-    this->setWidget(m_body);
-    this->setWidgetResizable(true);
+void Page::refresh(){
+    setMinimumWidth(ZOOM(578));
+    setStyleSheet("background-color:rgba(255,255,255,0);"
+                  "border-radius:0px;");
 }
-void Page::flashHide(){
-    this->hide();
+void Page::hide(){
+    QWidget::hide();
 }
-void Page::flashShow(){
-    this->show();
+void Page::show(){
+    QWidget::show();
 }

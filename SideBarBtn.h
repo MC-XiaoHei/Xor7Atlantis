@@ -1,32 +1,21 @@
 #ifndef SIDEBARBTN_H
 #define SIDEBARBTN_H
 
-#include "SelfLockBtnBg.h"
+#include "SelfLockBtnBgInGroup.h"
 #include "stable.h"
 #include "Zoomer.h"
 
-class SideBarBtn : public QObject
+class SideBarBtn : public SelfLockBtnBgInGroup
 {
     Q_OBJECT
 public:
-    explicit SideBarBtn(quint8 index,QString text,QString iconPath,QWidget *parent = nullptr);
-    void refresh();
-    void release(){bg->release();}
-    void click(){bg->click();}
-    bool isActive(){return bg->isActive();}
-    void onTimerEvent();
-    void setDefault();
-signals:
-    void clicked();
-protected:
-    void timerEvent(QTimerEvent *event){onTimerEvent();}
+    explicit SideBarBtn(quint64 index,SelfLockBtnBgGroupConfig cfg,QString text,QString iconPath,QWidget *parent = nullptr);
+    void setPageName(QString name){pageName=name;}
+    void setText(QString t){text=t;}
+    QString getName(){return pageName;}
+    QString getText(){return text;}
 private:
-    quint8 index;
-    int cursorAlpha=0;
-    QString text,iconPath;
-    QPushButton *btn=new QPushButton,
-                *cursor=new QPushButton;
-    SelfLockBtnBg *bg=new SelfLockBtnBg(btn);
+    QString text,iconPath,pageName;
     QLabel *l_icon,*l_text;
 };
 #endif // SIDEBARBTN_H

@@ -64,7 +64,7 @@ void ButtonBg::setAlpha(int nAlpha){
     alpha=nAlpha;
     this->setStyleSheet(QString(
         "background-color:rgba(%1,%2);%3")
-        .arg(color,QString::number(nAlpha),qss));
+        .arg(color,QString::number((int)nAlpha*alphaMultiplier),qss));
 }
 void ButtonBg::setState(BtnBgState state){
     goalState=state;

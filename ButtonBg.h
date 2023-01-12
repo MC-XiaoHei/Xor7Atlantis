@@ -19,6 +19,7 @@ public:
     void setState(BtnBgState state);
     BtnBgState getNowState(){return nowState;}
     BtnBgState getGoalState(){return goalState;}
+    void setAlphaMultiplier(double am){alphaMultiplier=am;}
     void setPos(QPoint pos);
     void setMaximumSize(QSize size);
     void setMaximumSize(int maxw,int maxh){setMaximumSize(QSize(maxw,maxh));}
@@ -26,6 +27,7 @@ protected:
     void timerEvent(QTimerEvent *event);
 private:
     int alpha,maxAlpha=160,midAlpha=80,minAlpha=0,lastAlpha;
+    double alphaMultiplier;
     QString color="255,255,255",qss="border-radius:4px";
     QRect minGeo,maxGeo,lastGeo;
     BtnBgState nowState=BtnBgState::Inactive,

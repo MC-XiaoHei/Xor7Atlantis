@@ -2,36 +2,36 @@
 #include "LaunchCore.h"
 #include "AuthCore.h"
 #include "MainWindow.h"
-#include "ProfileManager.h"
+#include "AccountManager.h"
 #include "UpdateManager.h"
-void startGame(){
-    VerInfo ver;
-    LaunchInfo launch;
-    AuthProfile profile;
-    profile.mcAccessToken="accessT";
-    profile.uuid="uuid";
-    profile.username="player";
-    launch.profile=profile;
-    launch.height=400;
-    launch.width=640;
-    launch.mem=1024;
-    launch.java=LaunchCore::javaInfoVec.first();
-    ver.name="1.16.5";
-    ver.gamePath="/home/mc_xiaohei/.minecraft";
-    LaunchCore::getJson(ver);
-    QString cmd=LaunchCore::getStartCmd(ver,launch);
-    QString path = ver.verPath()+QDir::toNativeSeparators("/X7A/");
-    QDir().mkpath(path);
-    path+=("start" ESuffix);
-    QFile file(path);
-    file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text);
-    file.write(cmd.toLocal8Bit());
-    file.close();
-    CreatePtr(Shell,s);
-    s->connect(s.get(),&Shell::onReceive,[=](QString data){qDebug()<<data;});
-    LaunchCore::reloadNatives(ver);
-    s->start(path,QStringList());
-}
+//void startGame(){
+//    VerInfo ver;
+//    LaunchInfo launch;
+//    AuthProfile profile;
+//    profile.mcAccessToken="accessT";
+//    profile.uuid="uuid";
+//    profile.username="player";
+//    launch.profile=profile;
+//    launch.height=400;
+//    launch.width=640;
+//    launch.mem=1024;
+//    launch.java=LaunchCore::javaInfoVec.first();
+//    ver.name="1.16.5";
+//    ver.gamePath="/home/mc_xiaohei/.minecraft";
+//    LaunchCore::getJson(ver);
+//    QString cmd=LaunchCore::getStartCmd(ver,launch);
+//    QString path = ver.verPath()+QDir::toNativeSeparators("/X7A/");
+//    QDir().mkpath(path);
+//    path+=("start" ESuffix);
+//    QFile file(path);
+//    file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text);
+//    file.write(cmd.toLocal8Bit());
+//    file.close();
+//    CreatePtr(Shell,s);
+//    s->connect(s.get(),&Shell::onReceive,[=](QString data){qDebug()<<data;});
+//    LaunchCore::reloadNatives(ver);
+//    s->start(path,QStringList());
+//}
 int main(int argc, char *argv[]){
     SingleApplication::setOrganizationDomain("xor7.tk");
     SingleApplication::setOrganizationName("Xor 7 Studio");

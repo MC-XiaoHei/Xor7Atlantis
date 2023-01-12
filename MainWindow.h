@@ -7,7 +7,7 @@
 struct SideWidth{
     quint8 top=32,
            bottom=16,
-           right=16;
+           right=4;
 };
 enum class Action{
     NOTHING,

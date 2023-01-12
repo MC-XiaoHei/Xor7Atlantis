@@ -25,6 +25,37 @@ struct AuthProfile{
     //"authlib:${url}" = Authlib账户
     //"universal:${code}" = 统一通行证账户
 };
+struct OpenFrpProfile{
+    QString username,
+            email,
+            sessionId,
+            friendlyGroup,
+            group,
+            token;
+    bool realname;
+    quint64 outLimit,
+            inLimit,
+            id,
+            traffic,
+            used,
+            proxies;
+};
+struct OpenFrpProxy{
+    QString localIp,
+            proxyName,
+            friendlyNode,
+            connectAddr;
+    quint64 id,
+            localPort,
+            remotePort,
+            node;
+    bool online;
+};
+struct OpenFrpNode{
+    QString name;
+    quint64 id,
+            status;
+};
 
 class AuthCore : public QObject
 {
@@ -38,7 +69,12 @@ public:
     AuthProfile profile;
     explicit AuthCore(QObject *parent = nullptr);
     void offline_login(QString username, bool demo=false);
+    static QString getSkin(AuthProfile profile){
+        return QDir::toNativeSeparators(CfgPath+QString("skin/%1-%2.png").arg(profile.authServer,profile.uuid));
+    }
     void ms_login();
+    void ms_refresh();
+    void ms_loginEvent();
     void ms_getCode(std::function<void(bool,QString)> func);
     void ms_getMSToken(std::function<void(QNetworkReply*)> func);
     void ms_getXBLToken(std::function<void(QNetworkReply*)> func);
